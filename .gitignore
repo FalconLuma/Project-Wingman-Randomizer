@@ -12,3 +12,6 @@ ProjectWingman/
 venv/
 *.uexp
 *.pak
+/compat-balanced-wingman.dtp
+*.json
+*.dtp
