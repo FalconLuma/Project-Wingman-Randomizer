@@ -33,7 +33,6 @@ class PlaneSlots(Enum):
     ACG01 = [11, 3, 5, 'ACG-01']
 
 
-print('Welcome to the Project Wingman Randomizer')
 print('Please enter a seed or press enter to use a random seed')
 
 # Read in the seed and remove the newline char
@@ -56,7 +55,7 @@ numWeps = len(weaponsMaster)
 # Shuffle the main weapons list
 random.shuffle(weaponsMaster)
 
-dtp = open(r".\ProjectWingman\sicario\pw-randomizer.dtp", "w+")
+dtp = open(r"..\ProjectWingman\sicario\pw-randomizer.dtp", "w+")
 dtpStart = ["{\n", ' "meta": {\n', '  "DisplayName": "Randomizer: ' + str(seed) + '",\n', '  "Author": "FalconLuma"\n',
             ' },\n',
             ' "modParameters": {},\n', ' "mods": [{\n', '  "FilePatches": {},\n', '  "AssetPatches": {\n',
