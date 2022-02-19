@@ -1,14 +1,14 @@
 import sys
 import random
 from enum import Enum
-import dtpWriter
 
 # Stores all weapons available in the game
-weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'hmaa', 'mlag', 'mlag2', 'adm', 'ugbs', 'ugbs3',
-                 'ugbl', 'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rg', 'rgps',
-                 'rdbm', 'eubm', 'eufb', 'bmlaa', 'sr', 'sr2', 'cgp', 'hvsm', 'cbl', 'hism', 'asm', 'rgpi', 'mgpi',
-                 'hgpi', 'cgpi']
+weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'mlag', 'mlag2', 'adm', 'ugbs', 'ugbs3', 'ugbl',
+                 'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rgps', 'sr', 'sr2',
+                 'cgp', 'hvsm', 'hism', 'asm']
 
+# Non working and removed weapons
+# 'hmaa', 'rdbm', 'eubm', 'eufb', 'bmlaa', 'rgpi', 'mgpi', 'hgpi', 'cgpi', 'rg', 'cbl'
 
 # Stores the number of weapons per slot for each plane
 class PlaneSlots(Enum):
@@ -43,7 +43,7 @@ for line in sys.stdin:
 
 # If no seed was entered create a random one
 if seed == '':
-    seed = random.randrange(sys.maxsize)
+    seed = int(random.randrange(sys.maxsize))
 
 random.seed(seed)
 r = random.Random(seed)
@@ -56,7 +56,7 @@ numWeps = len(weaponsMaster)
 # Shuffle the main weapons list
 random.shuffle(weaponsMaster)
 
-dtp = open(r".\ProjectWingman\sicario\pw-randomizer "+str(seed)+".dtp", "w+")
+dtp = open(r".\ProjectWingman\sicario\pw-randomizer.dtp", "w+")
 dtpStart = ["{\n", ' "meta": {\n', '  "DisplayName": "Randomizer: ' + str(seed) + '",\n', '  "Author": "FalconLuma"\n',
             ' },\n',
             ' "modParameters": {},\n', ' "mods": [{\n', '  "FilePatches": {},\n', '  "AssetPatches": {\n',
@@ -65,7 +65,7 @@ dtp.writelines(dtpStart)
 
 # Iterate over all the planes
 for PLANE in PlaneSlots:
-    dtp.write('    {\n     "name": "' + PLANE.name + 'Random Loadout",\n     "patches": [\n      {\n       '
+    dtp.write('    {\n     "name": "' + PLANE.name + ' Random Loadout",\n     "patches": [\n      {\n       '
               '"description": "Calibrate HardpointCompatibilityList",\n       "template": "datatable:[' + "'" +
               PLANE.value[3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''       "value": "StrProperty:[' + "'" + 'stdm')
     # print(PLANE.name)
@@ -86,10 +86,9 @@ for PLANE in PlaneSlots:
             w[i] = weapon
             weapons[wepNum] = ''
             i = i + 1
-
-        if a == 0:
+        if PLANE.value[3] == 'TF-4E' and s == 0:
             dtp.write("','0")
-        else:
+        if a != 0:
             dtp.write("','0")
             for sw in w:
                 dtp.write("," + str(sw))
