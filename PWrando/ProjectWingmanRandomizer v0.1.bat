@@ -1,4 +1,7 @@
 @echo off
+
+del /q .\ProjectWingman\sicario\*
+
 echo Welcome to the Project Wingman Randomizer mod by FalconLuma
 echo.
 
