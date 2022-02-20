@@ -16,3 +16,4 @@ venv/
 *.json
 *.dtp
 !PWrando/PW-Randomizer_default_P.pak
+/PWrando/runRando Test.bat
