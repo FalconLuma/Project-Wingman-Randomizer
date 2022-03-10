@@ -2,7 +2,6 @@ import random
 import sys
 import tkinter as tk
 from enum import Enum
-import os
 
 weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'mlag', 'mlag2', 'adm', 'ugbs', 'ugbs3', 'ugbl',
                  'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rgps', 'sr', 'sr2',
@@ -23,6 +22,9 @@ MAXTURN = 300
 MAXYAW = 30
 
 attrs = ['InterpSpeed', 'MaxSpeed', 'Acceleration', 'RollSpeed', 'TurnSpeed', 'YawSpeed']
+
+filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
+
 
 # Stores the number of weapons per slot for each plane
 class PlaneInfo(Enum):
@@ -46,7 +48,8 @@ class PlaneInfo(Enum):
     VX23 = [4, 2, 3, 'F-22']
     ACG01 = [11, 3, 5, 'ACG-01']
 
-#Generates a random seed
+
+# Generates a random seed
 def genSeed():
     t1.delete('1.0', 'end')
     seed = int(random.randrange(sys.maxsize))
@@ -57,40 +60,55 @@ def genSeed():
     # Only allows one seed to be randomized
     b1.config(state='disabled')
 
-#Manages running the randomizer
+
+# Manages running the randomizer
 def runRando():
-    seed = t1.get('1.0','end').strip('\n')
+    seed = t1.get('1.0', 'end').strip('\n')
 
     global seedGens
 
     if seedGens == 0:
         # If the seed wasn't randomized runs a single rng to allow for random seeds to be repeatable
-        print('HI')
         random.randrange(sys.maxsize)
 
-    dtp = open(r"./ProjectWingman/sicario/pw-randomizer.dtp", "r+")
+    dtp = open(filepath, "w+")
+    #Clear the DTP file of all text before starting
     dtp.truncate(0)
-    dtpStart = ["{\n", ' "_meta": {\n', '  "DisplayName": "Weapon Randomizer: ' + str(seed) + '",\n',
-                '  "Author": "FalconLuma"\n',
-                ' },\n',
-                ' "modParameters": {},\n', ' "mods": [{\n', '  "FilePatches": {},\n', '  "AssetPatches": {\n', ]
+    dtpStart = ["{\n",
+                '    "modParameters": {},\n',
+                '    "mods": [{\n',
+                '        "_meta": {\n',
+                '            "DisplayName": "Project Wingman Randomizer: ' + str(seed) + '",\n',
+                '            "Author": "FalconLuma"\n',
+                '        },\n',
+                '        "FilePatches": {},\n',
+                '        "AssetPatches": {\n']
 
     dtp.writelines(dtpStart)
-    dtp.write('   "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
+    dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
     dtp.close()
 
     if rWeps.get():
         weaponRando(seed)
 
     if rStats.get():
+        if rWeps.get():
+            dtp = open(filepath, "a")
+            dtp.write(',\n')
+            dtp.close()
         statRando(seed)
 
-    dtp = open(r"./ProjectWingman/sicario/pw-randomizer.dtp", "a")
-    dtp.write(']')
-    dtp.write('\n')
-    dtpEnd = ['  }\n', ' }]\n', '}']
+    dtp = open(filepath, "a")
+    dtpEnd = ['            ]\n',
+              '        }\n',
+              '    }]\n',
+              '}']
     dtp.writelines(dtpEnd)
     dtp.close()
+
+    #Display a message when the randomizer is finished
+    labelFinished = tk.Label(text="Your randomizer mod has been created\nPlease run ProjectSicario.exe",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+    labelFinished.pack()
 
 def weaponRando(seed):
     random.seed(seed)
@@ -101,14 +119,19 @@ def weaponRando(seed):
     # Shuffle the main weapons list
     random.shuffle(weaponsMaster)
 
-    dtp = open(r"./ProjectWingman/sicario/pw-randomizer.dtp", "a")
-
-
+    dtp = open(filepath, "a")
     # Iterate over all the planes
     for PLANE in PlaneInfo:
-        dtp.write('    {\n     "name": "' + PLANE.name + ' Random Loadout",\n     "patches": [\n      {\n       '
-                  '"description": "Calibrate HardpointCompatibilityList",\n       "template": "datatable:[' + "'" +
-                  PLANE.value[3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''       "value": "StrProperty:[' + "'" + 'stdm')
+        modTextTop = ['                {\n',
+                      '                    "name": "' + PLANE.name + ' Random Loadout",\n',
+                      '                    "patches": [\n',
+                      '                        {\n',
+                      '                            "description": "Calibrate HardpointCompatibilityList",\n',
+                      '                            "template": "datatable:[' + "'" + PLANE.value[
+                          3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''',
+                      '                            "value": "StrProperty:[' + "'" + 'stdm'
+                      ]
+        dtp.writelines(modTextTop)
         # print(PLANE.name)
         s = 0
         # Iterate over all 3 of each plane's slots
@@ -133,18 +156,20 @@ def weaponRando(seed):
                 dtp.write("','0")
                 for sw in w:
                     dtp.write("," + str(sw))
-
             s = s + 1
-        dtp.write("']" + '",\n       "type": "arrayPropertyValue"\n')
-        dtp.write('      }\n     ]\n    },\n')
+        dtp.write("']" + '",\n                            "type": "arrayPropertyValue"\n')
+        dtp.write('                        }\n                    ]\n                }')
+        if PLANE.value[3] != 'ACG-01':
+            dtp.write(',\n')
 
     dtp.close()
+
 
 def statRando(seed):
     random.seed(seed)
     r = random.Random(seed)
 
-    dtp = open(r"./ProjectWingman/sicario/pw-randomizer.dtp", "a")
+    dtp = open(filepath, "a")
 
     # Iterate over all the planes
     for PLANE in PlaneInfo:
@@ -155,52 +180,76 @@ def statRando(seed):
         turn = random.randint(MINTURN, MAXTURN)
         yaw = random.randint(MINYAW, MAXYAW)
 
-        vals = [response,speed,accel,roll,turn,yaw]
+        vals = [response, speed, accel, roll, turn, yaw]
 
-        dtp.write('    {\n     "name": "' + PLANE.name + ' Random Stats",\n     "patches": [\n')
-
+        modTextTop = ['                {\n',
+                      '                    "name": "' + PLANE.name + ' Random Stats",\n',
+                      '                    "patches": [\n',
+                      ]
+        dtp.writelines(modTextTop)
         i = 0
         while i < 6:
-            dtp.write('      {\n       ''"description": "Modify ' + attrs[i] + '",\n       "template": "datatable:[' + "'" +
-                PLANE.value[3] + "'].[0].{'BaseStats*'}.{'" + attrs[i] + "*'}.<FloatProperty>" + '",\n       '
-                '"value": "FloatProperty:' + str(vals[i]) + '",\n       "type": "propertyValue"\n      }')
+            modText = [
+                '                        {\n',
+                '                            ''"description": "Modify ' + attrs[i] + '",\n',
+                '                            "template": "datatable:[' + "'" + PLANE.value[
+                    3] + "'].[0].{'BaseStats*'}.{'" + attrs[i] + "*'}.<FloatProperty>" + '",\n'
+                                                                                         '                            ''"value": "FloatProperty:' + str(
+                    vals[i]) + '",\n',
+                '                            "type": "propertyValue"\n',
+                '                         }'
+            ]
+            dtp.writelines(modText)
             if i != 5:
                 dtp.write(", ")
             i = i + 1
-
-        dtp.write('\n     ]\n    }')
+        dtp.write('\n                    ]\n                }')
         if PLANE.value[3] != 'ACG-01':
             dtp.write(',')
         dtp.write('\n')
-
     dtp.close()
 
+
 ########################################################################################################################
-#####                                               GUI                                                            #####
+##                                              GUI                                                                   ##
 ########################################################################################################################
 
 window = tk.Tk()
 window.title('Project Wingman Randomizer')
 window.geometry('500x500')
-window.config(bg='#333333')
+window.config(bg='#303030')
 
 seedGens = 0
 
-t1 = tk.Text(window,height=1,width=50)
+l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma",bg='#303030',fg='#e7530c',pady=(10),font=('bold', 26))
+l1.pack()
+
+l2 = tk.Label(text="Enter a seed or press the button to generate a random seed",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+l2.pack()
+
+t1 = tk.Text(window, height=1, width=40)
 t1.pack()
 
-b1 = tk.Button(window, text = "Generate Seed", command=genSeed, )
+b1 = tk.Button(window, text="Generate Seed", command=genSeed,bg='#303030',fg='#e7530c',font=('bold', 15))
 b1.pack()
 
+lblank1 = tk.Label(text="",bg='#303030',font=('',8))
+lblank1.pack()
+
+l3 = tk.Label(text="Please select what attributes you would like to randomize:",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+l3.pack()
 
 rWeps = tk.BooleanVar()
 rStats = tk.BooleanVar()
-c1 = tk.Checkbutton(window, text='Randomize Weapons', variable=rWeps, onvalue=True, offvalue=False)
+c1 = tk.Checkbutton(window, text='Randomize Plane Weapons',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rWeps, onvalue=True, offvalue=False)
 c1.pack()
-c2 = tk.Checkbutton(window, text='Randomize Stats', variable=rStats, onvalue=True, offvalue=False)
+c2 = tk.Checkbutton(window, text='Randomize Plane Performance',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rStats, onvalue=True, offvalue=False)
 c2.pack()
 
-b2 = tk.Button(window, text = "Press to Randomize", width = 25, command = runRando)
+lblank2 = tk.Label(text="",bg='#303030',font=('',8))
+lblank2.pack()
+
+b2 = tk.Button(window, text="Press to Randomize",bg='#e7530c', width=25, command=runRando,font=('bold', 15))
 b2.pack()
 
 window.mainloop()

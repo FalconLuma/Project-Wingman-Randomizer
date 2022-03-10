@@ -1,1 +1,1 @@
-pyinstaller -c -F PWRandomizer.py
+pyinstaller -F -w --icon="randoIcon.ico" --clean PWRandomizer.py
