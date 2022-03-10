@@ -19,3 +19,14 @@ venv/
 !PWrando/PW-Randomizer_default_P.pak
 /PWrando/runRando Test.bat
 PWRandoRelease/
+*.png
+*.webp
+*.psd
+old/
+
+PWRando/dist
+PWRando/Build
+PWRandomizer 0.1/
+PWRandomizer 0.2/
+*.zip
+*.spec
