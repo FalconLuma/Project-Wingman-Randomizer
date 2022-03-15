@@ -1,11 +1,12 @@
 import random
 import sys
+import time
 import tkinter as tk
 from enum import Enum
 
-weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'mlag', 'mlag2', 'adm', 'ugbs', 'ugbs3', 'ugbl',
-                 'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rgps', 'sr', 'sr2',
-                 'cgp', 'hvsm', 'hism', 'asm']
+weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'mlag', 'mlag2', 'ugbs', 'ugbs3', 'ugbl',
+                 'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rgpd', 'sr', 'sr2',
+                 'cgp', 'hvsm', 'hism', 'asm', 'hmaa', 'rdbm', 'eufb', 'bmlaa']
 
 MINRESPONSE = 1.0
 MINSPEED = 1000
@@ -47,6 +48,8 @@ class PlaneInfo(Enum):
     FS15 = [3, 2, 3, 'F-15SMTD']
     VX23 = [4, 2, 3, 'F-22']
     ACG01 = [11, 3, 5, 'ACG-01']
+    SPEAR = [1,1,1, 'SPEAR']
+    PWMK1 = [1,1,0, 'PW-001']
 
 
 # Generates a random seed
@@ -60,7 +63,6 @@ def genSeed():
     # Only allows one seed to be randomized
     b1.config(state='disabled')
 
-
 # Manages running the randomizer
 def runRando():
     seed = t1.get('1.0', 'end').strip('\n')
@@ -71,8 +73,12 @@ def runRando():
         # If the seed wasn't randomized runs a single rng to allow for random seeds to be repeatable
         random.randrange(sys.maxsize)
 
-    dtp = open(filepath, "w+")
-    #Clear the DTP file of all text before starting
+    # Try to open/create the dtp, at minimum the ~mods folder must exist, otherwise display an error message
+    try:
+        dtp = open(filepath, "w+")
+    except:
+        labelError.pack()
+    # Clear the DTP file of all text before starting
     dtp.truncate(0)
     dtpStart = ["{\n",
                 '    "modParameters": {},\n',
@@ -85,6 +91,29 @@ def runRando():
                 '        "AssetPatches": {\n']
 
     dtp.writelines(dtpStart)
+    # Unlock normally unavlaiable weapons
+    unlockText = ['            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Weapons/DWeaponDB.uexp": [\n',
+                  '                {',
+                  '                    "name": "Make all weapons avaliable",\n',
+                  '                    "patches": [\n',
+                  '                        {\n',
+                  '                            "description": "Make all weapons avaliable",\n',
+                  '''                            "template": "datatable:{'IsAvailable*'}",\n'''
+                  '                            "value": "BoolProperty:true",\n',
+                  '                            "type": "propertyValue"\n',
+                  '                        },\n',
+                  '                        {\n',
+                  '                            "description": "Make al weapons avaliable outside Conquest",\n',
+                  '''                            "template": "datatable:{'CQOnly*'}",\n''',
+                  '                            "value": "BoolProperty:false",\n',
+                  '                            "type": "propertyValue"\n',
+                  '                        }\n',
+                  '                    ]\n',
+                  '                }\n',
+                  '            ],\n'
+                  ]
+    dtp.writelines(unlockText)
+
     dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
     dtp.close()
 
@@ -106,9 +135,11 @@ def runRando():
     dtp.writelines(dtpEnd)
     dtp.close()
 
-    #Display a message when the randomizer is finished
-    labelFinished = tk.Label(text="Your randomizer mod has been created\nPlease run ProjectSicario.exe",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+    # Display a message when the randomizer is finished
+
     labelFinished.pack()
+    labelError.destroy()
+    b2.config(state='disabled')
 
 def weaponRando(seed):
     random.seed(seed)
@@ -120,6 +151,22 @@ def weaponRando(seed):
     random.shuffle(weaponsMaster)
 
     dtp = open(filepath, "a")
+
+    # unlock fixed weapons (SPEAR and PWMK1)
+    unfixText = ['                {\n',
+                 '                    "name": "un-fix loadouts",\n',
+                 '                    "patches": [\n',
+                 '                        {\n',
+                 '                            "description": "Disable Fixed Loadouts",\n',
+                 '''                            "template": "datatable:{'FixedLoadout*'}",\n''',
+                 '                            "value": "BoolProperty:false",\n',
+                 '                            "type": "propertyValue"\n',
+                 '                        }\n',
+                 '                    ]\n',
+                 '                },\n'
+                 ]
+    dtp.writelines(unfixText)
+
     # Iterate over all the planes
     for PLANE in PlaneInfo:
         modTextTop = ['                {\n',
@@ -132,7 +179,6 @@ def weaponRando(seed):
                       '                            "value": "StrProperty:[' + "'" + 'stdm'
                       ]
         dtp.writelines(modTextTop)
-        # print(PLANE.name)
         s = 0
         # Iterate over all 3 of each plane's slots
         while s < 3:
@@ -158,8 +204,19 @@ def weaponRando(seed):
                     dtp.write("," + str(sw))
             s = s + 1
         dtp.write("']" + '",\n                            "type": "arrayPropertyValue"\n')
-        dtp.write('                        }\n                    ]\n                }')
-        if PLANE.value[3] != 'ACG-01':
+        dtp.write('                        },\n')
+
+        gunRandoText = ['                        {\n',
+                        '                            "description": "Calibrate CannonType",\n',
+                        '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '].[0].{'+ "'" + 'BaseStats*' + "'" + '}.{'+ "'" +'CannonType*'+ "'" +'}.<S_CannonType::>",\n',
+                        '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(random.randint(0,2)) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        }\n'
+                        ]
+        dtp.writelines(gunRandoText)
+
+        dtp.write('                    ]\n                }')
+        if PLANE.value[3] != 'PW-001':
             dtp.write(',\n')
 
     dtp.close()
@@ -204,7 +261,7 @@ def statRando(seed):
                 dtp.write(", ")
             i = i + 1
         dtp.write('\n                    ]\n                }')
-        if PLANE.value[3] != 'ACG-01':
+        if PLANE.value[3] != 'PW-001':
             dtp.write(',')
         dtp.write('\n')
     dtp.close()
@@ -216,7 +273,7 @@ def statRando(seed):
 
 window = tk.Tk()
 window.title('Project Wingman Randomizer')
-window.geometry('500x500')
+window.geometry('500x600')
 window.config(bg='#303030')
 
 seedGens = 0
@@ -251,5 +308,11 @@ lblank2.pack()
 
 b2 = tk.Button(window, text="Press to Randomize",bg='#e7530c', width=25, command=runRando,font=('bold', 15))
 b2.pack()
+
+labelFinished = tk.Label(text="\nYour randomizer mod has been created\nPlease run ProjectSicario.exe\n\nYou can now close this program",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+
+labelError = tk.Label(
+        text="\nERROR: The mod file could not be created, ensure this program is located in your Project Wingman install folder and that the '~mods' folder exists in 'ProjectWingman\Content\Paks'",
+        bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
 
 window.mainloop()
