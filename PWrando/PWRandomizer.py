@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
+"""
+@author: FalconLuma
+"""
+
 import random
 import sys
-import time
 import tkinter as tk
 from enum import Enum
 
@@ -51,7 +56,6 @@ class PlaneInfo(Enum):
     SPEAR = [1,1,1, 'SPEAR']
     PWMK1 = [1,1,0, 'PW-001']
 
-
 # Generates a random seed
 def genSeed():
     t1.delete('1.0', 'end')
@@ -59,7 +63,7 @@ def genSeed():
     global seedGens
     seedGens = seedGens + 1
     print(seedGens)
-    t1.insert('end', seed)
+    t1.insert('end',  str(seed))
     # Only allows one seed to be randomized
     b1.config(state='disabled')
 
@@ -91,19 +95,19 @@ def runRando():
                 '        "AssetPatches": {\n']
 
     dtp.writelines(dtpStart)
-    # Unlock normally unavlaiable weapons
+    # Unlock normally unavailable weapons
     unlockText = ['            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Weapons/DWeaponDB.uexp": [\n',
                   '                {',
-                  '                    "name": "Make all weapons avaliable",\n',
+                  '                    "name": "Make all weapons available",\n',
                   '                    "patches": [\n',
                   '                        {\n',
-                  '                            "description": "Make all weapons avaliable",\n',
+                  '                            "description": "Make all weapons available",\n',
                   '''                            "template": "datatable:{'IsAvailable*'}",\n'''
                   '                            "value": "BoolProperty:true",\n',
                   '                            "type": "propertyValue"\n',
                   '                        },\n',
                   '                        {\n',
-                  '                            "description": "Make al weapons avaliable outside Conquest",\n',
+                  '                            "description": "Make al weapons available outside Conquest",\n',
                   '''                            "template": "datatable:{'CQOnly*'}",\n''',
                   '                            "value": "BoolProperty:false",\n',
                   '                            "type": "propertyValue"\n',
@@ -118,7 +122,7 @@ def runRando():
     dtp.close()
 
     if rWeps.get():
-        weaponRando(seed)
+        weaponRando(seed,nukes.get())
 
     if rStats.get():
         if rWeps.get():
@@ -141,7 +145,7 @@ def runRando():
     labelError.destroy()
     b2.config(state='disabled')
 
-def weaponRando(seed):
+def weaponRando(seed, nukes):
     random.seed(seed)
     r = random.Random(seed)
 
@@ -193,6 +197,8 @@ def weaponRando(seed):
                 while weapon == '':
                     wepNum = random.randint(0, numWeps - 1)
                     weapon = weapons[wepNum]
+                    if(not nukes and weapon == 'eufb'):
+                        weapon = ''
                 w[i] = weapon
                 weapons[wepNum] = ''
                 i = i + 1
@@ -254,11 +260,11 @@ def statRando(seed):
                                                                                          '                            ''"value": "FloatProperty:' + str(
                     vals[i]) + '",\n',
                 '                            "type": "propertyValue"\n',
-                '                         }'
+                '                        }'
             ]
             dtp.writelines(modText)
             if i != 5:
-                dtp.write(", ")
+                dtp.write(",\n")
             i = i + 1
         dtp.write('\n                    ]\n                }')
         if PLANE.value[3] != 'PW-001':
@@ -287,7 +293,7 @@ l2.pack()
 t1 = tk.Text(window, height=1, width=40)
 t1.pack()
 
-b1 = tk.Button(window, text="Generate Seed", command=genSeed,bg='#303030',fg='#e7530c',font=('bold', 15))
+b1 = tk.Button(window, text="Create Random Seed", command=genSeed,bg='#303030',fg='#e7530c',font=('bold', 12))
 b1.pack()
 
 lblank1 = tk.Label(text="",bg='#303030',font=('',8))
@@ -297,9 +303,12 @@ l3 = tk.Label(text="Please select what attributes you would like to randomize:",
 l3.pack()
 
 rWeps = tk.BooleanVar()
+nukes = tk.BooleanVar()
 rStats = tk.BooleanVar()
 c1 = tk.Checkbutton(window, text='Randomize Plane Weapons',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rWeps, onvalue=True, offvalue=False)
 c1.pack()
+c11 = tk.Checkbutton(window, text='Allow Nukes (EUFB)',bg='#303030',fg='#e7530c',font=('bold', 15), variable=nukes, onvalue=True, offvalue=False)
+c11.pack()
 c2 = tk.Checkbutton(window, text='Randomize Plane Performance',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rStats, onvalue=True, offvalue=False)
 c2.pack()
 
