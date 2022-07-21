@@ -33,3 +33,30 @@ PWRandomizer 0.2/
 DWeaponDB_docs.txt
 DB_Aircraft_docs.txt
 PWrando/u4pak-master/unpak.bat
+*.ini
+*.uasset
+*.ubulk
+*.ufont
+*.res
+*.brk
+*.dict
+*.cfu
+*.icu
+*.nrm
+*.locmeta
+*.locres
+*.tps
+*.ttf
+*.uplugin
+*.bin
+ProjectWingman1/Plugins/ProjectWingman.upluginmanifest
+ProjectWingman1/ProjectWingman.uproject
+PWrando/ProjectWingman1/ProjectWingman.uproject
+PWrando/ProjectWingman1/Plugins/ProjectWingman.upluginmanifest
+PWRandomizer 1.0/PWRandomizer.py
+saves/Campaign1.sav
+saves/MIG21 SOLD.sav
+saves/NG Merc Campaign.sav
+Utilities-master/AssetEditor.exe
+Utilities-master/README.md
+~mods - Shortcut.lnk

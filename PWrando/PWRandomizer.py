@@ -7,30 +7,8 @@
 import random
 import sys
 import tkinter as tk
+from tkinter import ttk
 from enum import Enum
-
-weaponsMaster = ['stdm', 'stdm2', 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'mlag', 'mlag2', 'ugbs', 'ugbs3', 'ugbl',
-                 'bdu16', 'gbs', 'gbs3', 'urs', 'urmb', 'urm', 'droptank', 'rgp', 'mgp', 'hgp', 'rgpd', 'sr', 'sr2',
-                 'cgp', 'hvsm', 'hism', 'asm', 'hmaa', 'rdbm', 'eufb', 'bmlaa']
-
-MINRESPONSE = 1.0
-MINSPEED = 1000
-MINACCEL = 25
-MINROLL = 50
-MINTURN = 50
-MINYAW = 5
-
-MAXRESPONSE = 7.0
-MAXSPEED = 4000
-MAXACCEL = 200
-MAXROLL = 350
-MAXTURN = 300
-MAXYAW = 30
-
-attrs = ['InterpSpeed', 'MaxSpeed', 'Acceleration', 'RollSpeed', 'TurnSpeed', 'YawSpeed']
-
-filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
-
 
 # Stores the number of weapons per slot for each plane
 class PlaneInfo(Enum):
@@ -53,30 +31,83 @@ class PlaneInfo(Enum):
     FS15 = [3, 2, 3, 'F-15SMTD']
     VX23 = [4, 2, 3, 'F-22']
     ACG01 = [11, 3, 5, 'ACG-01']
-    SPEAR = [1,1,1, 'SPEAR']
-    PWMK1 = [1,1,0, 'PW-001']
+    SPEAR = [1, 1, 1, 'SPEAR']
+    PWMK1 = [1, 1, 0, 'PW-001']
+
+print("Launching Randomizer")
+
+#Window declared here
+window = tk.Tk()
+
+WEAPONSNAMES = [['MSSL', 'stdm', 'STDM'], ['MSSL_Multi2', 'stdm2', 'STDM-2'], ['HVSM', 'hvsm', 'HVSM'], ['HISM', 'hism', 'HISM'], ['RDBM', 'rdbm', 'RDBM'], ['BMLAA', 'bmlaa', 'BML-U'],
+                ['XMA4', 'mlaa', 'MLAA'], ['XMA4_Multi2', 'mlaa2', 'MLAA-2'], ['XMA4_Multi3', 'mlaa3', 'MLAA-3'], ['SAAM', 'saa', 'SAA'],
+                ['ASM', 'asm', 'ASM'], ['AGM', 'mlag', 'MLAG'], ['AGM_Multi2', 'mlag2', 'MLAG-2'], ['GBS', 'gbs', 'GBS'], ['GBS_Multi3', 'gbs3', 'GBS-3'],
+                ['UGBS', 'ugbs', 'UGBS'], ['UGBS_Multi3', 'ugbs3', 'UGBS-3'], ['UGBL', 'ugbl', 'UGBL'], ['DropTank', 'droptank', 'DT'], ['EUFB', 'eufb', 'EUFB'], ['BDU16', 'bdu16', 'BDU-16'],
+                ['URS', 'urs', 'URS'], ['URM', 'urm', 'URM'], ['URMB', 'urmb', 'URMB'], ['SR', 'sr', 'SR'], ['SR-2', 'sr2', 'SR-2'],
+                ['Gunpod_LITE', 'rgp', 'RGP'], ['Gunpod_MID', 'mgp', 'MGP'], ['Gunpod_HVY', 'hgp', 'HGP'], ['Gunpod_CAN', 'cgp', 'CGP'], ['RailgunGunpod', 'rgpd', 'RG']]
+
+WEAPONSMASTER = ['stdm', 'stdm2', 'hvsm', 'hism', 'rdbm', 'bmlaa',
+                 'mlaa', 'mlaa2', 'mlaa3', 'saa',
+                 'asm', 'mlag', 'mlag2', 'gbs', 'gbs3',
+                 'ugbs', 'ugbs3', 'ugbl', 'droptank', 'eufb', 'bdu16',
+                  'urs', 'urm', 'urmb', 'sr', 'sr2', 'rgp', 'mgp', 'hgp', 'cgp','rgpd']
+
+weaponsNames = []
+weaponsMaster = []
+
+weaponsSelected = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+
+# Plane Stat Ranges [Min, Max] Tuples
+pStatNames = ['Response', 'Speed', 'Accel', 'Roll', 'Turn', 'Yaw']
+pStatRanges = [[1.0, 7.0], [1000, 4000], [25, 200], [50, 350], [50, 300], [5, 30]] # Response, Speed, Accel, Roll, Turn, Yaw
+
+# Weapon Stat Ranges [Min, Max] Tuples
+wStatNames = ['Reload', 'Ammunition', 'Loaded', 'Max Locks', 'Range', 'Gun Reload', 'Gun Ammo']
+wStatRanges = [[3, 40], [8, 182], [1, 20], [1, 44], [2800, 12000], [0.01, 0.2], [320, 3800]] # Reload, Ammo, Proj, Salvo, Range, GunReload, GunAmmo
+
+unguidedChance = 0.5
+
+attrs = ['InterpSpeed', 'MaxSpeed', 'Acceleration', 'RollSpeed', 'TurnSpeed', 'YawSpeed']
+
+filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
+
+rLoad = tk.BooleanVar()
+rStats = tk.BooleanVar()
+rWeps = tk.BooleanVar()
 
 # Generates a random seed
+
 def genSeed():
     t1.delete('1.0', 'end')
     seed = int(random.randrange(sys.maxsize))
     global seedGens
     seedGens = seedGens + 1
-    print(seedGens)
-    t1.insert('end',  str(seed))
+    t1.insert('end', str(seed))
     # Only allows one seed to be randomized
     b1.config(state='disabled')
 
 # Manages running the randomizer
 def runRando():
+    print('Starting Randomizer')
     seed = t1.get('1.0', 'end').strip('\n')
-
+    try:
+        variants = int(t2.get('1.0', 'end').strip('\n'))
+    except:
+        variants = 1
     global seedGens
 
     if seedGens == 0:
         # If the seed wasn't randomized runs a single rng to allow for random seeds to be repeatable
         random.randrange(sys.maxsize)
 
+    #Prepare weapons lists
+    i = 0
+
+    while i < len(WEAPONSMASTER):
+        if weaponsSelected[i]:
+            weaponsNames.append(WEAPONSNAMES[i])
+            weaponsMaster.append(WEAPONSMASTER[i])
+        i = i + 1
     # Try to open/create the dtp, at minimum the ~mods folder must exist, otherwise display an error message
     try:
         dtp = open(filepath, "w+")
@@ -114,20 +145,30 @@ def runRando():
                   '                        }\n',
                   '                    ]\n',
                   '                }\n',
-                  '            ],\n'
                   ]
     dtp.writelines(unlockText)
 
-    dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
+    if rWeps.get():
+        print('Randomizing Weapon Stats')
+        dtp.writelines([',\n'])
+        dtp.close()
+        weaponRando(seed, variants)
+
+    dtp = open(filepath, "a")
+    wepCloseText = ['            ],\n',
+                    '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n']
+    dtp.writelines(wepCloseText)
     dtp.close()
 
-    if rWeps.get():
-        weaponRando(seed,nukes.get())
+    if rLoad.get():
+        print('Randomizing Loadouts')
+        loadoutRando(seed)
 
     if rStats.get():
-        if rWeps.get():
+        print('Randomizing Aircraft Performance')
+        if rLoad.get():
             dtp = open(filepath, "a")
-            dtp.write(',\n')
+            dtp.writelines([',\n'])
             dtp.close()
         statRando(seed)
 
@@ -138,14 +179,16 @@ def runRando():
               '}']
     dtp.writelines(dtpEnd)
     dtp.close()
-
+    print('Finished Randomizing')
+    print('Depending on your settings Project Sicario Merger may take more than a minute to run')
     # Display a message when the randomizer is finished
 
     labelFinished.pack()
     labelError.destroy()
     b2.config(state='disabled')
 
-def weaponRando(seed, nukes):
+
+def loadoutRando(seed):
     random.seed(seed)
     r = random.Random(seed)
 
@@ -190,15 +233,13 @@ def weaponRando(seed, nukes):
             a = PLANE.value[s]
             w = [0 for _ in range(a)]
             i = 0
-            while i < a:
+            while i < a and i < len(weaponsMaster):
                 # When no weapon is selected '' re-roll
                 # when a weapon is chosen remove it from the pool for this slot to avoid duplicates in the same slot
                 weapon = ''
                 while weapon == '':
                     wepNum = random.randint(0, numWeps - 1)
                     weapon = weapons[wepNum]
-                    if(not nukes and weapon == 'eufb'):
-                        weapon = ''
                 w[i] = weapon
                 weapons[wepNum] = ''
                 i = i + 1
@@ -214,8 +255,10 @@ def weaponRando(seed, nukes):
 
         gunRandoText = ['                        {\n',
                         '                            "description": "Calibrate CannonType",\n',
-                        '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '].[0].{'+ "'" + 'BaseStats*' + "'" + '}.{'+ "'" +'CannonType*'+ "'" +'}.<S_CannonType::>",\n',
-                        '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(random.randint(0,2)) + "'" + '",\n',
+                        '                            "template": "datatable:[' + "'" + PLANE.value[
+                            3] + "'" + '].[0].{' + "'" + 'BaseStats*' + "'" + '}.{' + "'" + 'CannonType*' + "'" + '}.<S_CannonType::>",\n',
+                        '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(
+                            random.randint(0, 2)) + "'" + '",\n',
                         '                            "type": "propertyValue"\n',
                         '                        }\n'
                         ]
@@ -236,12 +279,12 @@ def statRando(seed):
 
     # Iterate over all the planes
     for PLANE in PlaneInfo:
-        response = round(random.uniform(MINRESPONSE, MAXRESPONSE), 1)
-        speed = random.randint(MINSPEED, MAXSPEED)
-        accel = random.randint(MINACCEL, MAXACCEL)
-        roll = random.randint(MINROLL, MAXROLL)
-        turn = random.randint(MINTURN, MAXTURN)
-        yaw = random.randint(MINYAW, MAXYAW)
+        response = round(random.uniform(pStatRanges[0][0],pStatRanges[0][1]), 1)
+        speed = random.randint(pStatRanges[1][0],pStatRanges[1][1])
+        accel = random.randint(pStatRanges[2][0],pStatRanges[2][1])
+        roll = random.randint(pStatRanges[3][0],pStatRanges[3][1])
+        turn = random.randint(pStatRanges[4][0],pStatRanges[4][1])
+        yaw = random.randint(pStatRanges[5][0],pStatRanges[5][1])
 
         vals = [response, speed, accel, roll, turn, yaw]
 
@@ -273,55 +316,344 @@ def statRando(seed):
     dtp.close()
 
 
+def weaponRando(seed, variants):
+    dtp = open(filepath, "a")
+    weaponsMaster.clear()
+    random.seed(seed)
+    for w in weaponsNames:
+        var = range(variants)
+        for n in var:
+            id = w[0] + '_' + str(n + 1)
+            name = w[1] + '_' + str(n + 1)
+            weaponsMaster.append(name)
+            # Reload, Ammo, Proj, Salvo, Range, GunReload, GunAmmo
+            stats = []  # Reload,Ammo,Proj,Salvo,Range
+            i = 0
+            while i < 5:
+                if i == 0:
+                    if w[1] in ['rgp', 'mgp', 'hgp', 'cgp']:
+                        v = round(random.uniform(wStatRanges[5][0], wStatRanges[5][1]), 4)
+                    else:
+                        v = float(random.randint(wStatRanges[0][0], wStatRanges[0][1]))
+                elif i == 1:
+                    if w[1] in ['rgp', 'mgp', 'hgp', 'cgp']:
+                        v = random.randint(wStatRanges[6][0], wStatRanges[6][1])
+                    else:
+                        v = random.randint(wStatRanges[1][0], wStatRanges[1][1])
+                elif i == 2:
+                    if w[1] in ['rgp', 'mgp', 'hgp', 'cgp']:
+                        v = 20
+                    else:
+                        v = random.randint(wStatRanges[2][0], wStatRanges[2][1])
+                elif i == 3:
+                    if w[1] == 'rdbm':
+                        v = 1
+                    else:
+                        v = random.randint(wStatRanges[3][0], wStatRanges[3][1])
+                else:
+                    if w[1] in ['rgp', 'mgp', 'hgp', 'cgp', 'rgpd']:
+                        v = 0
+                    else:
+                        v = float(random.randint(wStatRanges[4][0], wStatRanges[4][1]))
+                    # Give unguided weapons a chance to be unguided
+                    if w[1] in ['ugbl', 'ugbs', 'ugbs3', 'droptank', 'eufb', 'bdu16', 'urs', 'urm', 'urmb', 'sr', 'sr2']:
+                        c = round(random.uniform(0,1),2)
+                        if c >= unguidedChance:
+                            v = 0
+                stats.append(v)
+                i = i + 1
+
+            statString = 'Reload: ' + str(stats[0]) + ',    ' + 'Ammo: ' + str(
+                stats[1]) + ',    ' + 'Projectiles: ' + str(stats[2]) + ',    ' + 'Salvo: ' + str(
+                stats[3]) + ',    ' + 'Range: ' + str(stats[4])
+
+            uiName = w[2] + ' mk.' + str(n + 1)
+
+            cloneText = ['                {\n',
+                         '                    "name": "Add new weapon",\n',
+                         '                    "patches": [\n',
+                         '                        {\n',
+                         '                            "description": "Clone ' + w[0] + '",\n',
+                         '                            "template": "datatable:[*]",\n'
+                         '                            "value": "' + "'" + w[0] + "'>'" + id + "'" + '",\n',
+                         '                            "type": "duplicateEntry"\n',
+                         '                        }\n',
+                         '                    ]\n',
+                         '                },\n',
+                         ]
+            dtp.writelines(cloneText)
+            statText = ['                {\n',
+                        '                    "name": "Set Stats",\n',
+                        '                    "patches": [\n',
+                        '                        {\n',
+                        '                            "description": "Change ID",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'ID*' + "'" + '}.<StrProperty>",\n'
+                        '                            "value": "StrProperty:' + "'" + name + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change LongDesc",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'WeaponLongDescription*' + "'" + '}.<TextProperty>",\n'
+                        '                            "value": "' + "'" + id + "_WeaponLongDescription':'" + statString + "'" + '",\n',
+                        '                            "type": "textProperty"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change uiName",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'WeaponUIName*' + "'" + '}.<TextProperty>",\n'
+                        '                            "value": "TextProperty:' + "'" + uiName + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change Reload",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'ReloadTime*' + "'" + '}.<FloatProperty>",\n'
+                        '                            "value": "FloatProperty:' + "'" + str(stats[0]) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change Ammo",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'WeaponAmmo*' + "'" + '}.<IntProperty>",\n'
+                        '                            "value": "IntProperty:' + "'" + str(stats[1]) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change Proj",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'MaxProjectile*' + "'" + '}.<IntProperty>",\n'
+                        '                            "value": "IntProperty:' + "'" + str(stats[2]) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change Salvo",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'MaxMultiLock*' + "'" + '}.<IntProperty>",\n'
+                        '                            "value": "IntProperty:' + "'" + str(stats[3]) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        },\n',
+                        '                        {\n',
+                        '                            "description": "Change Range",\n',
+                        '                            "template": "datatable:[' + "'" + id + "'" + '].[0].{' + "'" 'LockonRange*' + "'" + '}.<FloatProperty>",\n'
+                        '                            "value": "FloatProperty:' + "'" + str(stats[4]) + "'" + '",\n',
+                        '                            "type": "propertyValue"\n',
+                        '                        }\n',
+                        '                    ]\n',
+                        '                }',
+                        ]
+            dtp.writelines(statText)
+            if w[1] == weaponsNames[len(weaponsNames)-1][1] and n == variants - 1:
+                dtp.write('\n')
+            else:
+                dtp.write(',\n')
+
 ########################################################################################################################
 ##                                              GUI                                                                   ##
 ########################################################################################################################
 
-window = tk.Tk()
 window.title('Project Wingman Randomizer')
-window.geometry('500x600')
+window.geometry('550x700')
 window.config(bg='#303030')
 
 seedGens = 0
 
-l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma",bg='#303030',fg='#e7530c',pady=(10),font=('bold', 26))
+# Displays the Settings Window
+def openSettings():
+    def saveSettings():
+        try:
+            boxstates()
+            pStatStates()
+            wStatStates()
+            global unguidedChance
+            unguidedChance = float(ugChance.get())
+            lblError = tk.Label(settings, text="\nSettings Saved", bg='#303030', fg='#e7530c', padx=300, font=('bold', 20),wraplength=800)
+            lblError.grid(row=20, columnspan=7)
+        except Exception as e:
+            print(e)
+            lblError = tk.Label(settings, text="\n"+str(e), bg='#303030', fg='#e7530c', padx=100, font=('bold', 20), wraplength=800)
+            lblError.grid(row=20, columnspan=7)
+
+    def boxstates():
+        finalValue = []
+        global weaponsSelected
+        for x in TweaponsSelected:
+            finalValue.append(x.get())
+        weaponsSelected = finalValue
+        print(weaponsSelected)
+
+    def pStatStates():
+        finalValue = []
+        global pStatRanges
+        for i, x in enumerate(TplaneStats):
+            if i == 0:
+                finalValue.append([float(x[0].get()),float(x[1].get())])
+            else:
+                finalValue.append([int(x[0].get()), int(x[1].get())])
+        pStatRanges = finalValue
+        print(pStatRanges)
+
+    def wStatStates():
+        finalValue = []
+        global wStatRanges
+        for i, x in enumerate(TweaponStats):
+            if i == 5:
+                finalValue.append([float(x[0].get()), float(x[1].get())])
+            else:
+                finalValue.append([int(x[0].get()), int(x[1].get())])
+        wStatRanges = finalValue
+        print(wStatRanges)
+
+    settings = tk.Tk()
+    settings.title('Project Wingman Randomizer Setings')
+    settings.geometry('950x700')
+    settings.config(bg='#303030')
+    # ----------PLane Stats Select----------
+    TplaneStats = [[tk.StringVar(settings, value=str(pStatRanges[0][0])), tk.StringVar(settings, value=str(pStatRanges[0][1]))],
+                   [tk.StringVar(settings, value=str(pStatRanges[1][0])), tk.StringVar(settings, value=str(pStatRanges[1][1]))],
+                   [tk.StringVar(settings, value=str(pStatRanges[2][0])), tk.StringVar(settings, value=str(pStatRanges[2][1]))],
+                   [tk.StringVar(settings, value=str(pStatRanges[3][0])), tk.StringVar(settings, value=str(pStatRanges[3][1]))],
+                   [tk.StringVar(settings, value=str(pStatRanges[4][0])), tk.StringVar(settings, value=str(pStatRanges[4][1]))],
+                   [tk.StringVar(settings, value=str(pStatRanges[5][0])), tk.StringVar(settings, value=str(pStatRanges[5][1]))]]
+
+    l3 = tk.Label(settings, text="Define Min and Max values for Aircraft Performance*", bg='#303030', fg='#e7530c',
+                  font=('bold', 20))
+    l3.grid(row=0, columnspan=7)
+
+    def createPlaneStatText():
+        col = 0
+        for x, y in zip(TplaneStats, pStatNames):
+            label1 = tk.Label(settings, text=y, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
+            textMin = ttk.Entry(settings, textvariable=x[0])
+            textMax = ttk.Entry(settings, textvariable=x[1])
+            label1.grid(row=1, column=col)
+            textMin.grid(row=2, column=col, padx=5)
+            textMax.grid(row=3, column=col, padx=5)
+            col = col + 1
+
+    # ----------Weapon Stats Select----------
+    # Reload Time (Seconds)
+    TweaponStats = [[tk.StringVar(settings, value=str(wStatRanges[0][0])), tk.StringVar(settings, value=str(wStatRanges[0][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[1][0])), tk.StringVar(settings, value=str(wStatRanges[1][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[2][0])), tk.StringVar(settings, value=str(wStatRanges[2][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[3][0])), tk.StringVar(settings, value=str(wStatRanges[3][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[4][0])), tk.StringVar(settings, value=str(wStatRanges[4][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[5][0])), tk.StringVar(settings, value=str(wStatRanges[5][1]))],
+                    [tk.StringVar(settings, value=str(wStatRanges[6][0])), tk.StringVar(settings, value=str(wStatRanges[6][1]))]]
+
+    # ----------Weapon Select----------
+    TweaponsSelected = [tk.BooleanVar(settings, value=weaponsSelected[i]) for i in range(len(WEAPONSMASTER))]
+
+    l1 = tk.Label(settings, text = "Select Weapons", bg='#303030', fg='#e7530c', font=('bold', 15))
+    l1.grid(row = 4, columnspan= 7)
+
+    colHead = ["General", "Air to Air", "A2G Guided", "A2G Unguied", "Rockets", "Guns"]
+    colLen = [6,4,5,6,5,5]
+
+
+    def createCheckboxes():
+        col = 0
+        row = 0
+        for x, y in zip (TweaponsSelected, WEAPONSNAMES):
+            if row == 0:
+                lh = tk.Label(settings, text=colHead[col], bg='#303030', fg='#e7530c', font=('bold', 15))
+                lh.grid(row=5, column=col)
+
+            check1_t1 = tk.Checkbutton(settings, text=y[2], variable=x, bg='#303030', fg='#e7530c', font=('bold', 12))
+            check1_t1.grid(row = 6 + row, column = col)
+            row = row + 1
+            if row == colLen[col]:
+                row = 0
+                col = col + 1
+
+    lblGuide = tk.Label(settings, text="Unguided Chance**", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
+    lblGuide.grid(row=5, column=6, rowspan=2)
+
+    ugChance = tk.StringVar(settings, value=unguidedChance)
+    text = ttk.Entry(settings, textvariable=ugChance)
+    text.grid(row=7,column=6)
+
+    l3 = tk.Label(settings, text="Define Min and Max values for Weapon Attributes*", bg='#303030', fg='#e7530c', font=('bold', 20))
+    l3.grid(row=13, columnspan=7)
+
+    def createWeaponStatText():
+        col=0
+        for x, y in zip(TweaponStats, wStatNames):
+            label1 = tk.Label(settings, text=y, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
+            textMin = ttk.Entry(settings, textvariable=x[0])
+            textMax = ttk.Entry(settings, textvariable=x[1])
+            label1.grid(row=14, column=col)
+            textMin.grid(row=15, column=col, padx=5)
+            textMax.grid(row=16, column=col, padx=5)
+            col = col + 1
+
+
+
+    createPlaneStatText()
+    createCheckboxes()
+    createWeaponStatText()
+
+    btn1 = tk.Button(settings, text="Save Settings", bg='#e7530c', command=saveSettings, width=25, font=('bold', 15))
+    btn1.grid(row = 17, columnspan=7, pady=20)
+    text1 = "* For each Min-Max pair be sure that the top value is lower than the bottom value otherwise the program " \
+            "will crash when attempting to run the randomizer"
+    text2 = "** Defines the chance that unguided weapons will not become guided. 0 = 0%, 1 = 100%"
+
+    lblInf1 = tk.Label(settings, text=text1, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=800)
+    lblInf1.grid(row=18, columnspan=7)
+    lblInf2 = tk.Label(settings, text=text2, bg='#303030', fg='#e7530c', font=('bold', 15))
+    lblInf2.grid(row=19, columnspan=7)
+
+    settings.mainloop()
+
+l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma", bg='#303030', fg='#e7530c', pady=(10),
+              font=('bold', 26))
 l1.pack()
 
-l2 = tk.Label(text="Enter a seed or press the button to generate a random seed",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+l2 = tk.Label(text="Enter a seed or press the button to generate a random seed", bg='#303030', fg='#e7530c',
+              font=('bold', 15), wraplength=400)
 l2.pack()
 
 t1 = tk.Text(window, height=1, width=40)
 t1.pack()
 
-b1 = tk.Button(window, text="Create Random Seed", command=genSeed,bg='#303030',fg='#e7530c',font=('bold', 12))
+b1 = tk.Button(window, text="Generate Random Seed", command=genSeed, bg='#303030', fg='#e7530c', font=('bold', 12))
 b1.pack()
 
-lblank1 = tk.Label(text="",bg='#303030',font=('',8))
+lblank1 = tk.Label(text="", bg='#303030', font=('', 8))
 lblank1.pack()
 
-l3 = tk.Label(text="Please select what attributes you would like to randomize:",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+l3 = tk.Label(text="Please select what attributes you would like to randomize:", bg='#303030', fg='#e7530c',
+              font=('bold', 15), wraplength=500)
 l3.pack()
 
-rWeps = tk.BooleanVar()
-nukes = tk.BooleanVar()
-rStats = tk.BooleanVar()
-c1 = tk.Checkbutton(window, text='Randomize Plane Weapons',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rWeps, onvalue=True, offvalue=False)
-c1.pack()
-c11 = tk.Checkbutton(window, text='Allow Nukes (EUFB)',bg='#303030',fg='#e7530c',font=('bold', 15), variable=nukes, onvalue=True, offvalue=False)
-c11.pack()
-c2 = tk.Checkbutton(window, text='Randomize Plane Performance',bg='#303030',fg='#e7530c',font=('bold', 15), variable=rStats, onvalue=True, offvalue=False)
+c2 = tk.Checkbutton(window, text='Randomize Plane Performance', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=rStats, onvalue=True, offvalue=False)
 c2.pack()
 
-lblank2 = tk.Label(text="",bg='#303030',font=('',8))
+c1 = tk.Checkbutton(window, text='Randomize Plane Weapons', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=rLoad, onvalue=True, offvalue=False)
+c1.pack()
+
+c3 = tk.Checkbutton(window, text='Randomize Weapon Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=rWeps, onvalue=True, offvalue=False)
+c3.pack()
+l4 = tk.Label(text="Enter the number of weapon variations to be created", bg='#303030', fg='#e7530c',
+              font=('bold', 15), wraplength=500)
+l4.pack()
+
+t2 = tk.Text(window, height=1, width=40)
+t2.pack()
+
+lblank2 = tk.Label(text="", bg='#303030', font=('', 8))
 lblank2.pack()
 
-b2 = tk.Button(window, text="Press to Randomize",bg='#e7530c', width=25, command=runRando,font=('bold', 15))
+b3 = tk.Button(window, text="Advanced Settings", bg='#e7530c', width=25, command=openSettings, font=('bold', 15))
+b3.pack()
+
+b2 = tk.Button(window, text="Press to Randomize", bg='#e7530c', width=25, command=runRando, font=('bold', 15))
 b2.pack()
 
-labelFinished = tk.Label(text="\nYour randomizer mod has been created\nPlease run ProjectSicario.exe\n\nYou can now close this program",bg='#303030',fg='#e7530c',font=('bold', 15),wraplength=400)
+labelFinished = tk.Label(
+    text="\nYour randomizer mod has been created\nPlease run ProjectSicario.exe\n\nYou can now close this program",
+    bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=500)
 
 labelError = tk.Label(
-        text="\nERROR: The mod file could not be created, ensure this program is located in your Project Wingman install folder and that the '~mods' folder exists in 'ProjectWingman\Content\Paks'",
-        bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
+    text="\nERROR: The mod file could not be created, ensure this program is located in your Project Wingman install folder and that the '~mods' folder exists in 'ProjectWingman\Content\Paks'",
+    bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=500)
 
 window.mainloop()
