@@ -2,6 +2,41 @@
 
 """
 @author: FalconLuma
+
+Randomizer project for Project Wingman
+"""
+
+"""
+Possible Randos
+- AI Behaviour
+    - Content\ProjectWingman\Blueprints\AIBehavior
+    - 9 Different Files to Edit
+    - Modify Task_Shoot_C.PlayerShootTime
+    
+- NPC Aricraft
+    - Content\ProjectWingman\Blueprints\Data\AircraftData\NPC\DAirUnitNPC.uasset
+    - BaseHP,RollSpeed,TurnSpeed,YawSpeed,DefaultSpeed,MaxSpeed,Acceleration 
+    
+- Ground Units
+    - Content\ProjectWingman\Blueprints\Data\GroundUnitData\DB_GroundUnit.uasset
+    - Health
+    
+- Ship Units
+    - Content\ProjectWingman\Blueprints\Data\ShipData\DB_ShipData.uasset
+    - CruiseSpeed,BaseHealth,UseAttHealthModifier,AttatchmentHealthModifier
+    
+- Airship Units
+    - Content\ProjectWingman\Blueprints\Data\AirshipData\DB_AirshipData.uasset
+    - CruiseSpeed,BaseHealth,UseAttHealthModifier,AttatchmentHealthModifier
+    
+- Difficulty
+    - Content\ProjectWingman\Blueprints\Data\Difficulty\DifficultyDataTable.uasset
+    - AIType, CanEvade, EvasionValues, ReloadValues
+    - Each attribute has versions for each difficulty [1,2,3,4]
+    
+- Levels
+    - Content\ProjectWingman\Blueprints\Data\Levels\DB_ProjectWingmanLevelList.uasset
+    - UnlockStringReward []
 """
 
 import random
@@ -55,7 +90,7 @@ WEAPONSMASTER = ['stdm', 'stdm2', 'hvsm', 'hism', 'rdbm', 'bmlaa',
 weaponsNames = []
 weaponsMaster = []
 
-weaponsSelected = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+weaponsSelected = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, True, True, True, True, True, True, True, True, True, True, True]
 
 # Plane Stat Ranges [Min, Max] Tuples
 pStatNames = ['Response', 'Speed', 'Accel', 'Roll', 'Turn', 'Yaw']
@@ -102,12 +137,12 @@ def runRando():
 
     #Prepare weapons lists
     i = 0
-
     while i < len(WEAPONSMASTER):
         if weaponsSelected[i]:
             weaponsNames.append(WEAPONSNAMES[i])
             weaponsMaster.append(WEAPONSMASTER[i])
         i = i + 1
+
     # Try to open/create the dtp, at minimum the ~mods folder must exist, otherwise display an error message
     try:
         dtp = open(filepath, "w+")
@@ -221,8 +256,7 @@ def loadoutRando(seed):
                       '                    "patches": [\n',
                       '                        {\n',
                       '                            "description": "Calibrate HardpointCompatibilityList",\n',
-                      '                            "template": "datatable:[' + "'" + PLANE.value[
-                          3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''',
+                      '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''',
                       '                            "value": "StrProperty:[' + "'" + 'stdm'
                       ]
         dtp.writelines(modTextTop)
@@ -255,10 +289,8 @@ def loadoutRando(seed):
 
         gunRandoText = ['                        {\n',
                         '                            "description": "Calibrate CannonType",\n',
-                        '                            "template": "datatable:[' + "'" + PLANE.value[
-                            3] + "'" + '].[0].{' + "'" + 'BaseStats*' + "'" + '}.{' + "'" + 'CannonType*' + "'" + '}.<S_CannonType::>",\n',
-                        '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(
-                            random.randint(0, 2)) + "'" + '",\n',
+                        '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '].[0].{' + "'" + 'BaseStats*' + "'" + '}.{' + "'" + 'CannonType*' + "'" + '}.<S_CannonType::>",\n',
+                        '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(random.randint(0, 2)) + "'" + '",\n',
                         '                            "type": "propertyValue"\n',
                         '                        }\n'
                         ]
@@ -298,10 +330,8 @@ def statRando(seed):
             modText = [
                 '                        {\n',
                 '                            ''"description": "Modify ' + attrs[i] + '",\n',
-                '                            "template": "datatable:[' + "'" + PLANE.value[
-                    3] + "'].[0].{'BaseStats*'}.{'" + attrs[i] + "*'}.<FloatProperty>" + '",\n'
-                                                                                         '                            ''"value": "FloatProperty:' + str(
-                    vals[i]) + '",\n',
+                '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'].[0].{'BaseStats*'}.{'" + attrs[i] + "*'}.<FloatProperty>" + '",\n'
+                '                            ''"value": "FloatProperty:' + str(vals[i]) + '",\n',
                 '                            "type": "propertyValue"\n',
                 '                        }'
             ]
@@ -358,7 +388,7 @@ def weaponRando(seed, variants):
                     # Give unguided weapons a chance to be unguided
                     if w[1] in ['ugbl', 'ugbs', 'ugbs3', 'droptank', 'eufb', 'bdu16', 'urs', 'urm', 'urmb', 'sr', 'sr2']:
                         c = round(random.uniform(0,1),2)
-                        if c >= unguidedChance:
+                        if unguidedChance >= c:
                             v = 0
                 stats.append(v)
                 i = i + 1
@@ -447,7 +477,7 @@ def weaponRando(seed, variants):
 ########################################################################################################################
 
 window.title('Project Wingman Randomizer')
-window.geometry('550x700')
+window.geometry('550x700+100+100')
 window.config(bg='#303030')
 
 seedGens = 0
@@ -460,13 +490,14 @@ def openSettings():
             pStatStates()
             wStatStates()
             global unguidedChance
-            unguidedChance = float(ugChance.get())
+            unguidedChance = max(min(float(ugChance.get()), 1.0), 0.0)
+            print(unguidedChance)
             lblError = tk.Label(settings, text="\nSettings Saved", bg='#303030', fg='#e7530c', padx=300, font=('bold', 20),wraplength=800)
-            lblError.grid(row=20, columnspan=7)
+            lblError.grid(row=23, columnspan=7)
         except Exception as e:
             print(e)
             lblError = tk.Label(settings, text="\n"+str(e), bg='#303030', fg='#e7530c', padx=100, font=('bold', 20), wraplength=800)
-            lblError.grid(row=20, columnspan=7)
+            lblError.grid(row=23, columnspan=7)
 
     def boxstates():
         finalValue = []
@@ -480,6 +511,16 @@ def openSettings():
         finalValue = []
         global pStatRanges
         for i, x in enumerate(TplaneStats):
+            a = float(x[0].get())
+            b = float(x[1].get())
+            attr = pStatNames[i]
+            if a < 0:
+                raise Exception("invalid value for " + attr + " minimum: " + str(a) + " < 0")
+            if a > b:
+                if i != 0:
+                    a = int(a)
+                    b = int(b)
+                raise Exception("invalid stat range for " + attr + ": " + str(a) + " > " + str(b))
             if i == 0:
                 finalValue.append([float(x[0].get()),float(x[1].get())])
             else:
@@ -491,6 +532,16 @@ def openSettings():
         finalValue = []
         global wStatRanges
         for i, x in enumerate(TweaponStats):
+            a = float(x[0].get())
+            b = float(x[1].get())
+            attr = wStatNames[i]
+            if a < 0:
+                raise Exception("invalid value for " + attr + " minimum: " + str(a) + " < 0")
+            if a > b:
+                if i != 5:
+                    a = int(a)
+                    b = int(b)
+                raise Exception("invalid stat range for " + attr + ": " + str(a) + " > " + str(b))
             if i == 5:
                 finalValue.append([float(x[0].get()), float(x[1].get())])
             else:
@@ -500,8 +551,11 @@ def openSettings():
 
     settings = tk.Tk()
     settings.title('Project Wingman Randomizer Setings')
-    settings.geometry('950x700')
+    settings.geometry('950x700+700+100')
     settings.config(bg='#303030')
+    lHeading = tk.Label(settings,text='Advanced Settings', bg='#303030', fg='#e7530c',font=('bold', 26))
+    lHeading.grid(row = 0, columnspan= 7)
+
     # ----------PLane Stats Select----------
     TplaneStats = [[tk.StringVar(settings, value=str(pStatRanges[0][0])), tk.StringVar(settings, value=str(pStatRanges[0][1]))],
                    [tk.StringVar(settings, value=str(pStatRanges[1][0])), tk.StringVar(settings, value=str(pStatRanges[1][1]))],
@@ -510,9 +564,9 @@ def openSettings():
                    [tk.StringVar(settings, value=str(pStatRanges[4][0])), tk.StringVar(settings, value=str(pStatRanges[4][1]))],
                    [tk.StringVar(settings, value=str(pStatRanges[5][0])), tk.StringVar(settings, value=str(pStatRanges[5][1]))]]
 
-    l3 = tk.Label(settings, text="Define Min and Max values for Aircraft Performance*", bg='#303030', fg='#e7530c',
+    l3 = tk.Label(settings, text="Define Min and Max values for Aircraft Performance", bg='#303030', fg='#e7530c',
                   font=('bold', 20))
-    l3.grid(row=0, columnspan=7)
+    l3.grid(row=1, columnspan=7)
 
     def createPlaneStatText():
         col = 0
@@ -520,30 +574,19 @@ def openSettings():
             label1 = tk.Label(settings, text=y, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
             textMin = ttk.Entry(settings, textvariable=x[0])
             textMax = ttk.Entry(settings, textvariable=x[1])
-            label1.grid(row=1, column=col)
-            textMin.grid(row=2, column=col, padx=5)
-            textMax.grid(row=3, column=col, padx=5)
+            label1.grid(row=2, column=col)
+            textMin.grid(row=3, column=col, padx=5)
+            textMax.grid(row=4, column=col, padx=5)
             col = col + 1
-
-    # ----------Weapon Stats Select----------
-    # Reload Time (Seconds)
-    TweaponStats = [[tk.StringVar(settings, value=str(wStatRanges[0][0])), tk.StringVar(settings, value=str(wStatRanges[0][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[1][0])), tk.StringVar(settings, value=str(wStatRanges[1][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[2][0])), tk.StringVar(settings, value=str(wStatRanges[2][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[3][0])), tk.StringVar(settings, value=str(wStatRanges[3][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[4][0])), tk.StringVar(settings, value=str(wStatRanges[4][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[5][0])), tk.StringVar(settings, value=str(wStatRanges[5][1]))],
-                    [tk.StringVar(settings, value=str(wStatRanges[6][0])), tk.StringVar(settings, value=str(wStatRanges[6][1]))]]
 
     # ----------Weapon Select----------
     TweaponsSelected = [tk.BooleanVar(settings, value=weaponsSelected[i]) for i in range(len(WEAPONSMASTER))]
 
-    l1 = tk.Label(settings, text = "Select Weapons", bg='#303030', fg='#e7530c', font=('bold', 15))
-    l1.grid(row = 4, columnspan= 7)
+    l1 = tk.Label(settings, text = "Select Weapons", bg='#303030', fg='#e7530c', font=('bold', 20))
+    l1.grid(row = 5, columnspan= 7)
 
-    colHead = ["General", "Air to Air", "A2G Guided", "A2G Unguied", "Rockets", "Guns"]
+    colHead = ["General", "Air to Air", "A2G Guided", "A2G Unguided", "Rockets", "Guns"]
     colLen = [6,4,5,6,5,5]
-
 
     def createCheckboxes():
         col = 0
@@ -551,24 +594,34 @@ def openSettings():
         for x, y in zip (TweaponsSelected, WEAPONSNAMES):
             if row == 0:
                 lh = tk.Label(settings, text=colHead[col], bg='#303030', fg='#e7530c', font=('bold', 15))
-                lh.grid(row=5, column=col)
+                lh.grid(row=6, column=col)
 
             check1_t1 = tk.Checkbutton(settings, text=y[2], variable=x, bg='#303030', fg='#e7530c', font=('bold', 12))
-            check1_t1.grid(row = 6 + row, column = col)
+            check1_t1.grid(row = 7 + row, column = col, sticky='W')
             row = row + 1
             if row == colLen[col]:
                 row = 0
                 col = col + 1
 
-    lblGuide = tk.Label(settings, text="Unguided Chance**", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
-    lblGuide.grid(row=5, column=6, rowspan=2)
+    lblGuide = tk.Label(settings, text="Unguided Chance*", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
+    lblGuide.grid(row=6, column=6, rowspan=2)
 
     ugChance = tk.StringVar(settings, value=unguidedChance)
     text = ttk.Entry(settings, textvariable=ugChance)
-    text.grid(row=7,column=6)
+    text.grid(row=8,column=6)
 
-    l3 = tk.Label(settings, text="Define Min and Max values for Weapon Attributes*", bg='#303030', fg='#e7530c', font=('bold', 20))
-    l3.grid(row=13, columnspan=7)
+    # ----------Weapon Stats Select----------
+    TweaponStats = [
+        [tk.StringVar(settings, value=str(wStatRanges[0][0])), tk.StringVar(settings, value=str(wStatRanges[0][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[1][0])), tk.StringVar(settings, value=str(wStatRanges[1][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[2][0])), tk.StringVar(settings, value=str(wStatRanges[2][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[3][0])), tk.StringVar(settings, value=str(wStatRanges[3][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[4][0])), tk.StringVar(settings, value=str(wStatRanges[4][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[5][0])), tk.StringVar(settings, value=str(wStatRanges[5][1]))],
+        [tk.StringVar(settings, value=str(wStatRanges[6][0])), tk.StringVar(settings, value=str(wStatRanges[6][1]))]]
+
+    l3 = tk.Label(settings, text="Define Min and Max values for Weapon Attributes", bg='#303030', fg='#e7530c', font=('bold', 20))
+    l3.grid(row=14, columnspan=7)
 
     def createWeaponStatText():
         col=0
@@ -576,32 +629,38 @@ def openSettings():
             label1 = tk.Label(settings, text=y, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
             textMin = ttk.Entry(settings, textvariable=x[0])
             textMax = ttk.Entry(settings, textvariable=x[1])
-            label1.grid(row=14, column=col)
-            textMin.grid(row=15, column=col, padx=5)
-            textMax.grid(row=16, column=col, padx=5)
+            label1.grid(row=15, column=col)
+            textMin.grid(row=16, column=col, padx=5)
+            textMax.grid(row=17, column=col, padx=5)
             col = col + 1
 
+    """
+    # ----------Misc Settings----------
+    TrGuns = tk.BooleanVar(settings, value=rGuns)
+    TallAoA = tk.BooleanVar(settings, value=allAoA)
 
+    l4 = tk.Label(settings, text="Misc. Settings", bg='#303030', fg='#e7530c',font=('bold', 20))
+    l4.grid(row=17, columnspan=7)
 
+    c1 = tk.Checkbutton(settings, text='Randomize Internal Guns', variable=TrGuns, bg='#303030', fg='#e7530c', font=('bold', 15))
+    c1.grid(row=18, column=0, columnspan=2)
+
+    c1 = tk.Checkbutton(settings, text='Give all aircraft AoA Limiter', variable=TallAoA, bg='#303030', fg='#e7530c',font=('bold', 15))
+    c1.grid(row=18, column=2, columnspan=2)
+    """
     createPlaneStatText()
     createCheckboxes()
     createWeaponStatText()
 
     btn1 = tk.Button(settings, text="Save Settings", bg='#e7530c', command=saveSettings, width=25, font=('bold', 15))
-    btn1.grid(row = 17, columnspan=7, pady=20)
-    text1 = "* For each Min-Max pair be sure that the top value is lower than the bottom value otherwise the program " \
-            "will crash when attempting to run the randomizer"
-    text2 = "** Defines the chance that unguided weapons will not become guided. 0 = 0%, 1 = 100%"
+    btn1.grid(row = 20, columnspan=7, pady=20)
+    text1 = "* Defines the chance that unguided weapons will NOT become guided. 0 = 0%, 1 = 100%"
 
     lblInf1 = tk.Label(settings, text=text1, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=800)
-    lblInf1.grid(row=18, columnspan=7)
-    lblInf2 = tk.Label(settings, text=text2, bg='#303030', fg='#e7530c', font=('bold', 15))
-    lblInf2.grid(row=19, columnspan=7)
-
+    lblInf1.grid(row=21, columnspan=7)
     settings.mainloop()
 
-l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma", bg='#303030', fg='#e7530c', pady=(10),
-              font=('bold', 26))
+l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma", bg='#303030', fg='#e7530c', pady=(10),font=('bold', 26))
 l1.pack()
 
 l2 = tk.Label(text="Enter a seed or press the button to generate a random seed", bg='#303030', fg='#e7530c',
@@ -632,7 +691,7 @@ c1.pack()
 c3 = tk.Checkbutton(window, text='Randomize Weapon Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
                     variable=rWeps, onvalue=True, offvalue=False)
 c3.pack()
-l4 = tk.Label(text="Enter the number of weapon variations to be created", bg='#303030', fg='#e7530c',
+l4 = tk.Label(text="Enter the number of variations of each weapon", bg='#303030', fg='#e7530c',
               font=('bold', 15), wraplength=500)
 l4.pack()
 
