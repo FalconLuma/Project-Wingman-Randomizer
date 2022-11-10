@@ -6,38 +6,10 @@
 Randomizer project for Project Wingman
 """
 
-"""
-Possible Randos
-- AI Behaviour
-    - Content\ProjectWingman\Blueprints\AIBehavior
-    - 9 Different Files to Edit
-    - Modify Task_Shoot_C.PlayerShootTime
-    
-- NPC Aricraft
-    - Content\ProjectWingman\Blueprints\Data\AircraftData\NPC\DAirUnitNPC.uasset
-    - BaseHP,RollSpeed,TurnSpeed,YawSpeed,DefaultSpeed,MaxSpeed,Acceleration 
-    
-- Ground Units
-    - Content\ProjectWingman\Blueprints\Data\GroundUnitData\DB_GroundUnit.uasset
-    - Health
-    
-- Ship Units
-    - Content\ProjectWingman\Blueprints\Data\ShipData\DB_ShipData.uasset
-    - CruiseSpeed,BaseHealth,UseAttHealthModifier,AttatchmentHealthModifier
-    
-- Airship Units
-    - Content\ProjectWingman\Blueprints\Data\AirshipData\DB_AirshipData.uasset
-    - CruiseSpeed,BaseHealth,UseAttHealthModifier,AttatchmentHealthModifier
-    
-- Difficulty
-    - Content\ProjectWingman\Blueprints\Data\Difficulty\DifficultyDataTable.uasset
-    - AIType, CanEvade, EvasionValues, ReloadValues
-    - Each attribute has versions for each difficulty [1,2,3,4]
-    
-- Levels
-    - Content\ProjectWingman\Blueprints\Data\Levels\DB_ProjectWingmanLevelList.uasset
-    - UnlockStringReward []
-"""
+
+
+
+
 
 import random
 import sys
@@ -104,6 +76,14 @@ unguidedChance = 0.5
 
 attrs = ['InterpSpeed', 'MaxSpeed', 'Acceleration', 'RollSpeed', 'TurnSpeed', 'YawSpeed']
 
+npcAicraft = ['AJS-37', 'F-18E', 'F-18F', 'F-18EADV', 'SU-27', 'MIG-31', 'F-15C', 'F-14D', 'F-22', 'F-16C', 'C-17',
+              'C-17_Fast', 'C-17_Faster', 'B-52', 'AS-02', 'DV-204', 'FC-8', 'SU-37', 'F-15SMTD', 'SU-30', 'F-4E',
+              'PW-01', 'J-10B', 'SU-25', 'Spear', 'CruiseMissile', 'CruiseMissile_Buff', 'CF-8', 'QGMk3', 'BCS4',
+              'MIG-29', 'MIG-21', 'AV-8', 'CHIMERA', 'CIV-8']
+naStatNames = ['BaseHP', 'RollSpeed', 'TurnSpeed', 'YawSpeed', 'DefaultSpeed', 'Acceleration']
+naStatRanges = [[10, 400], [15, 300], [5, 200], [5, 200], [400, 1000], [100, 600]]
+
+
 filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
 
 rLoad = tk.BooleanVar()
@@ -159,8 +139,14 @@ def runRando():
                 '        },\n',
                 '        "FilePatches": {},\n',
                 '        "AssetPatches": {\n']
-
     dtp.writelines(dtpStart)
+    dtp.close()
+
+    npcAirRando(seed)
+
+    dtp = open(filepath, "a")
+
+
     # Unlock normally unavailable weapons
     unlockText = ['            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Weapons/DWeaponDB.uexp": [\n',
                   '                {',
@@ -194,6 +180,7 @@ def runRando():
                     '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n']
     dtp.writelines(wepCloseText)
     dtp.close()
+
 
     if rLoad.get():
         print('Randomizing Loadouts')
@@ -471,6 +458,76 @@ def weaponRando(seed, variants):
                 dtp.write('\n')
             else:
                 dtp.write(',\n')
+
+
+def npcAirRando(seed):
+    print('hi')
+    dtp = open(filepath, "a")
+    random.seed(seed)
+
+    openText = [
+        '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/NPC/DAirUnitNPC.uexp": [\n',
+    ]
+
+    dtp.writelines(openText)
+
+    for a in npcAicraft:
+        stats = []
+        for i, v in enumerate(naStatNames):
+            stats.append(random.randint(naStatRanges[i][0], naStatRanges[i][1]))
+
+        statText = ['                {\n',
+                    '                    "name": "Set Stats",\n',
+                    '                    "patches": [\n',
+                    '                        {\n',
+                    '                            "description": "Change BaseHp",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'BaseHp*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[0]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "Change Ammo",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'RollSpeed*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[1]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "Change Proj",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'TurnSpeed*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[2]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "Change Salvo",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'YawSpeed*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[3]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "Change Range",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'DefaultSpeed*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[4]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "Change Range",\n',
+                    '                            "template": "datatable:[' + "'" + a + "'" + '].[0].{' + "'" 'Acceleration*' + "'" + '}.<IntProperty>",\n'
+                    '                            "value": "IntProperty:' + "'" + str(stats[5]) + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        }\n',
+                    '                    ]\n',
+                    '                }',
+                    ]
+        dtp.writelines(statText)
+        if a == npcAicraft[len(npcAicraft)-1]:
+            dtp.write('\n')
+        else:
+            dtp.write(',\n')
+    closeText = [
+        '            ],\n'
+    ]
+    dtp.writelines(closeText)
+    dtp.close()
 
 ########################################################################################################################
 ##                                              GUI                                                                   ##
