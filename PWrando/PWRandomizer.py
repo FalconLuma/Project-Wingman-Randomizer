@@ -85,6 +85,23 @@ naStatRanges = [[10, 400], [15, 300], [5, 200], [5, 200], [400, 1000], [100, 600
 
 OpSlotRanges = [1, 11]
 
+missionNames = ['C02_Frontiers', 'C03_Homestead', 'C04_Uphill', 'C05_Sirens', 'C06_MachineOfTheMantle',
+                'C07_EminentDomain', 'C08_ClearSkies', 'C09_SteppingStone', 'C10_PillarsOfComm', 'C11_ColdWar',
+                'C13_MidnightLight', 'C14_Valkyrie', 'C15_OpenSeason', 'C16_ConsequenceOf', 'C16B_Unfortunate',
+                'C17_NoRespite', 'C18_Return', 'C19_RedSea', 'C20_Presidia', 'C22_Kings']
+
+missionIDList = ['campaign_02','campaign_03','campaign_04','campaign_05','campaign_06','campaign_07','campaign_08',
+                 'campaign_09', 'campaign_10','campaign_11','campaign_13','campaign_14', 'campaign_15','campaign_16',
+                 'campaign_16.2','campaign_17','campaign_18','campaign_19','campaign_20','campaign_22']
+
+missionPointers = dict()
+for i, m in enumerate(missionIDList):
+    if i < len(missionIDList) - 1:
+        missionPointers[m] = missionIDList[i + 1]
+    else:
+        missionPointers[m] = 'ending'
+
+print(missionPointers)
 filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
 
 rLoad = tk.BooleanVar()
@@ -144,6 +161,7 @@ def runRando():
     dtp.close()
 
     #npcAirRando(seed)
+    missionOrderRando(seed)
 
     dtp = open(filepath, "a")
 
@@ -466,7 +484,48 @@ def weaponRando(seed, variants):
             else:
                 dtp.write(',\n')
 
+def missionOrderRando(seed):
+    dtp = open(filepath, "a")
+    random.seed(seed)
 
+    missionIDs = missionIDList
+    random.shuffle(missionIDs)
+    openText = [
+        '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Levels/DB_ProjectWingmanLevelList.uexp": [\n',
+        '                {\n',
+        '                    "name": "Re-Order Missions",\n',
+        '                    "patches": [\n',
+    ]
+    dtp.writelines(openText)
+
+    for i, m in enumerate(missionNames):
+        missionText = [
+            '                        {\n',
+            '                            "description": "",\n',
+            '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'ID*'" +'}.<StrProperty>",\n',
+            '                            "value": "StrProperty:' + "'" + missionIDs[i] + "'" + '",\n',
+            '                            "type": "propertyValue"\n',
+            '                        },\n',
+            '                        {\n',
+            '                            "description": "",\n',
+            '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'NextLevelLink*'" + '}.<StrProperty>",\n',
+            '                            "value": "StrProperty:' + "'" + missionPointers[missionIDs[i]] + "'" + '",\n',
+            '                            "type": "propertyValue"\n',
+            '                        }'
+        ]
+        dtp.writelines(missionText)
+        if i < len(missionNames) - 1:
+            dtp.write(',')
+        dtp.write('\n')
+
+    closeText = [
+        '                    ]\n',
+        '                }\n',
+        '            ],\n'
+    ]
+    dtp.writelines(closeText)
+    dtp.close()
+"""
 def npcAirRando(seed):
     print('hi')
     dtp = open(filepath, "a")
@@ -535,6 +594,8 @@ def npcAirRando(seed):
     ]
     dtp.writelines(closeText)
     dtp.close()
+"""
+
 
 ########################################################################################################################
 ##                                              GUI                                                                   ##
