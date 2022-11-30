@@ -6,11 +6,6 @@
 Randomizer project for Project Wingman
 """
 
-
-
-
-
-
 import random
 import sys
 import tkinter as tk
@@ -40,6 +35,11 @@ class PlaneInfo(Enum):
     ACG01 = [11, 3, 5, 'ACG-01']
     SPEAR = [1, 1, 1, 'SPEAR']
     PWMK1 = [1, 1, 0, 'PW-001']
+    CR105C = [5,6,5, 'CF-105_2']
+    MG21C = [3,0,0, 'MiG-21_2']
+    ACCIPTERC = [6,6,6,'AV-8_2']
+
+
 
 print("Launching Randomizer")
 
@@ -83,13 +83,14 @@ npcAicraft = ['AJS-37', 'F-18E', 'F-18F', 'F-18EADV', 'SU-27', 'MIG-31', 'F-15C'
 naStatNames = ['BaseHP', 'RollSpeed', 'TurnSpeed', 'YawSpeed', 'DefaultSpeed', 'Acceleration']
 naStatRanges = [[10, 400], [15, 300], [5, 200], [5, 200], [400, 1000], [100, 600]]
 
+OpSlotRanges = [1, 11]
 
 filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
 
 rLoad = tk.BooleanVar()
 rStats = tk.BooleanVar()
 rWeps = tk.BooleanVar()
-
+rOpSlot = tk.BooleanVar()
 # Generates a random seed
 
 def genSeed():
@@ -142,7 +143,7 @@ def runRando():
     dtp.writelines(dtpStart)
     dtp.close()
 
-    npcAirRando(seed)
+    #npcAirRando(seed)
 
     dtp = open(filepath, "a")
 
@@ -251,7 +252,13 @@ def loadoutRando(seed):
         # Iterate over all 3 of each plane's slots
         while s < 3:
             weapons = weaponsMaster.copy()
-            a = PLANE.value[s]
+            if(rOpSlot.get()):
+                if PLANE.value[s] == 0:
+                    a = 0
+                else:
+                    a = random.randint(OpSlotRanges[0],OpSlotRanges[1])
+            else:
+                a = PLANE.value[s]
             w = [0 for _ in range(a)]
             i = 0
             while i < a and i < len(weaponsMaster):
@@ -284,7 +291,7 @@ def loadoutRando(seed):
         dtp.writelines(gunRandoText)
 
         dtp.write('                    ]\n                }')
-        if PLANE.value[3] != 'PW-001':
+        if PLANE.value[3] != 'AV-8_2':
             dtp.write(',\n')
 
     dtp.close()
@@ -327,7 +334,7 @@ def statRando(seed):
                 dtp.write(",\n")
             i = i + 1
         dtp.write('\n                    ]\n                }')
-        if PLANE.value[3] != 'PW-001':
+        if PLANE.value[3] != 'AV-8_2':
             dtp.write(',')
         dtp.write('\n')
     dtp.close()
@@ -548,7 +555,15 @@ def openSettings():
             wStatStates()
             global unguidedChance
             unguidedChance = max(min(float(ugChance.get()), 1.0), 0.0)
-            print(unguidedChance)
+            global OpSlotRanges
+            a = int(OpsMin.get())
+            b = int(OpsMax.get())
+            attr = "Options per Slot"
+            if a < 0:
+                raise Exception("invalid value for '" + attr + "' minimum: " + str(a) + " < 0")
+            if a > b:
+                raise Exception("invalid stat range for '" + attr + "': " + str(a) + " > " + str(b))
+            OpSlotRanges = [a,b]
             lblError = tk.Label(settings, text="\nSettings Saved", bg='#303030', fg='#e7530c', padx=300, font=('bold', 20),wraplength=800)
             lblError.grid(row=23, columnspan=7)
         except Exception as e:
@@ -572,12 +587,12 @@ def openSettings():
             b = float(x[1].get())
             attr = pStatNames[i]
             if a < 0:
-                raise Exception("invalid value for " + attr + " minimum: " + str(a) + " < 0")
+                raise Exception("invalid value for '" + attr + "' minimum: " + str(a) + " < 0")
             if a > b:
                 if i != 0:
                     a = int(a)
                     b = int(b)
-                raise Exception("invalid stat range for " + attr + ": " + str(a) + " > " + str(b))
+                raise Exception("invalid stat range for '" + attr + "': " + str(a) + " > " + str(b))
             if i == 0:
                 finalValue.append([float(x[0].get()),float(x[1].get())])
             else:
@@ -593,12 +608,12 @@ def openSettings():
             b = float(x[1].get())
             attr = wStatNames[i]
             if a < 0:
-                raise Exception("invalid value for " + attr + " minimum: " + str(a) + " < 0")
+                raise Exception("invalid value for '" + attr + "' minimum: " + str(a) + " < 0")
             if a > b:
                 if i != 5:
                     a = int(a)
                     b = int(b)
-                raise Exception("invalid stat range for " + attr + ": " + str(a) + " > " + str(b))
+                raise Exception("invalid stat range for '" + attr + "': " + str(a) + " > " + str(b))
             if i == 5:
                 finalValue.append([float(x[0].get()), float(x[1].get())])
             else:
@@ -666,6 +681,15 @@ def openSettings():
     ugChance = tk.StringVar(settings, value=unguidedChance)
     text = ttk.Entry(settings, textvariable=ugChance)
     text.grid(row=8,column=6)
+
+    lblOps = tk.Label(settings, text="Options per Slot", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
+    lblOps.grid(row=9, column=6, rowspan=2)
+    OpsMin = tk.StringVar(settings, value=OpSlotRanges[0])
+    text = ttk.Entry(settings, textvariable=OpsMin)
+    text.grid(row=11, column=6)
+    OpsMax = tk.StringVar(settings, value=OpSlotRanges[1])
+    text = ttk.Entry(settings, textvariable=OpsMax)
+    text.grid(row=12, column=6)
 
     # ----------Weapon Stats Select----------
     TweaponStats = [
@@ -748,6 +772,9 @@ c1.pack()
 c3 = tk.Checkbutton(window, text='Randomize Weapon Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
                     variable=rWeps, onvalue=True, offvalue=False)
 c3.pack()
+c4 = tk.Checkbutton(window, text='Randomize Options/Slot', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=rOpSlot, onvalue=True, offvalue=False)
+c4.pack()
 l4 = tk.Label(text="Enter the number of variations of each weapon", bg='#303030', fg='#e7530c',
               font=('bold', 15), wraplength=500)
 l4.pack()
