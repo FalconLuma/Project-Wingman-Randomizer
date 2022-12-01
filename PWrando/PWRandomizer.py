@@ -94,6 +94,30 @@ missionIDList = ['campaign_02','campaign_03','campaign_04','campaign_05','campai
                  'campaign_09', 'campaign_10','campaign_11','campaign_13','campaign_14', 'campaign_15','campaign_16',
                  'campaign_16.2','campaign_17','campaign_18','campaign_19','campaign_20','campaign_22']
 
+missionUnlockStrings = {
+    'campaign_02':['mission_02','AJS-37'],
+    'campaign_03':['mission_03','CF-105','Su-25'],
+    'campaign_04':['mission_04','MIG-31','F-16C'],
+    'campaign_05':['mission_05','F-14D','MiG-29'],
+    'campaign_06':['mission_06','A-10A','AV-8'],
+    'campaign_07':['mission_07','F-18E','SU-27'],
+    'campaign_08':['mission_08','F-15C'],
+    'campaign_09':['mission_09','Su-30','RF-1'],
+    'campaign_10':['mission_10','Su-47'],
+    'campaign_11':['mission_11'],
+    'campaign_13':['mission_13','ACG-01','F-15SMTD'],
+    'campaign_14':['mission_14'],
+    'campaign_15':['mission_15','F-15E','SU-37'],
+    'campaign_16':['mission_16'],
+    'campaign_16.2':['mission_16.2'],
+    'campaign_17':['mission_17','F-22','Su-57'],
+    'campaign_18':['mission_18'],
+    'campaign_19':['mission_19'],
+    'campaign_20':['mission_20'],
+    'campaign_22':['campaignfinish','PW-001','SPEAR','mission_22']
+
+}
+
 missionPointers = dict()
 for i, m in enumerate(missionIDList):
     if i < len(missionIDList) - 1:
@@ -108,6 +132,8 @@ rLoad = tk.BooleanVar()
 rStats = tk.BooleanVar()
 rWeps = tk.BooleanVar()
 rOpSlot = tk.BooleanVar()
+rMission = tk.BooleanVar()
+repairUnlocks = tk.BooleanVar()
 # Generates a random seed
 
 def genSeed():
@@ -161,7 +187,8 @@ def runRando():
     dtp.close()
 
     #npcAirRando(seed)
-    missionOrderRando(seed)
+    if(rMission.get()):
+        missionOrderRando(seed)
 
     dtp = open(filepath, "a")
 
@@ -406,7 +433,7 @@ def weaponRando(seed, variants):
                 i = i + 1
 
             statString = 'Reload: ' + str(stats[0]) + ',    ' + 'Ammo: ' + str(
-                stats[1]) + ',    ' + 'Projectiles: ' + str(stats[2]) + ',    ' + 'Salvo: ' + str(
+                stats[1]) + ',    ' + 'Loaded: ' + str(stats[2]) + ',    ' + 'Max Locks: ' + str(
                 stats[3]) + ',    ' + 'Range: ' + str(stats[4])
 
             uiName = w[2] + ' mk.' + str(n + 1)
@@ -514,6 +541,18 @@ def missionOrderRando(seed):
             '                        }'
         ]
         dtp.writelines(missionText)
+        if repairUnlocks.get():
+            unlockText = [
+                ',\n',
+                '                        {\n',
+                '                            "description": "",\n',
+                '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
+                '                            "value": "StrProperty:' + str(missionUnlockStrings[missionIDs[i]]) + '",\n',
+                '                            "type": "arrayPropertyValue"\n',
+                '                        }',
+            ]
+            dtp.writelines(unlockText)
+
         if i < len(missionNames) - 1:
             dtp.write(',')
         dtp.write('\n')
@@ -602,7 +641,7 @@ def npcAirRando(seed):
 ########################################################################################################################
 
 window.title('Project Wingman Randomizer')
-window.geometry('550x700+100+100')
+window.geometry('550x800+100+100')
 window.config(bg='#303030')
 
 seedGens = 0
@@ -836,6 +875,21 @@ c3.pack()
 c4 = tk.Checkbutton(window, text='Randomize Options/Slot', bg='#303030', fg='#e7530c', font=('bold', 15),
                     variable=rOpSlot, onvalue=True, offvalue=False)
 c4.pack()
+
+def activeUnlock():
+    if rMission.get():
+        c6.config(state='active')
+    else:
+        c6.config(state='disabled')
+
+c5 = tk.Checkbutton(window, text='Randomize Mission Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=rMission, onvalue=True, offvalue=False, command=activeUnlock)
+c5.pack()
+
+c6 = tk.Checkbutton(window, text='Normal Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                    variable=repairUnlocks, onvalue=True, offvalue=False, state='disabled')
+c6.pack()
+
 l4 = tk.Label(text="Enter the number of variations of each weapon", bg='#303030', fg='#e7530c',
               font=('bold', 15), wraplength=500)
 l4.pack()

@@ -11,7 +11,7 @@ Requires Project Sicario Merger by agc93
 
 The randomizer mod will conflict with any mods that alter the performance or armament of aircraft or weapons
   - e.g. Balanced Wingman, All Weapons for All PLanes, etc.
-  - There should be no conflicts with purely aesthetic mods: skins, model swaps, audio replacement, etc.
+  - There should be no conflicts with purely aesthetic mods: skins, model-swaps, audio replacement, etc.
   - If used alongside a model-swap with custom loadouts make sure the randomizer is the last mod
     alphabetically to avoid the randomizer mod being overwritten e.g. add a 'z' to the start of the filename
 
@@ -40,20 +40,28 @@ Randomizer Seed
  
 Attribute Randomizer Selection
   - Use the checkboxes to select what parts of the game to randomize
-    - Plane Performance: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
+    - Plane Performance teh SV-37: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
     - Plane Weapons: Randomizes the weapons available to each plane
     - Weapon Stats: Randomizes attributes for player weapons (Ammo, Reload, Range, etc.)
       - Due to game limitations, attributes such as damage and explosion radius cannot be modified
     - Options/Slot: Randomizes how many weapon options are available for every weapon slot on every plane
-      - If left unchecked all slots will have same number of options as in an unmodified game
-      - Any slots that normally 0 options will not change
-
+      - If left unchecked all slots will have the same number of options as in an unmodified game
+      - Any slots that normally have 0 options will not change
+    - Mission Order: Randomizes the order of missions
+      - Does not affect the order of mission in Free Mission however the Menu name will be changed
+      - NOTE: Black Flag will always be the first mission of the campaign for reasons outside my control
+    - Normal Unlock Order: Alter the unlocks such that they are the same as in a normal campaign
+      - i.e. No matter what mission is 2nd the SV-37 will be unlocked upon completion
+      - if unchecked unlocks are tied to the mission itself
+        - i.e. Kings will always unlock the SP-34R and PW-MK.1 even if its the second mission in the campaign
+      - This option is only available if Mission Order Randomization is enabled
+      - Recommended if you plan to do a New Game playthrough for a smoother experience
 Weapon Variations 
   - Defaults to 1
   - Defines how many versions of each weapon should be created
     - i.e. a value of 3 would cause 3 different versions of MLAA to randomized with different stats
-    - I recommend a value between 1 and 3
     - This setting has a large impact on how long it will take to run PSM
+    - I recommend a value between 1 and 3
 
 -------------------------------------------------------------------------------------------------------------
 Advanced Settings
@@ -65,9 +73,8 @@ These setting allow you to fine tune the output of the randomizer by controlling
 can be assigned. 
   - Randomized stats will be >= min value and <= max value
   - By default all stat ranges are initialized to the ranges found naturally in the game
- 
 
-Aircraft Performance - These setting directly correlate the to the stats shown in the hangar
+Aircraft Performance - These settings directly correlate to the stats shown in the hangar
   - Response: Controls how long it takes for an input to be fully realised - higher is faster
     - e.g. how long it takes to move the ailerons from a neutral position to the requested position
   - Speed: The top speed of the aircraft in km/h
@@ -78,7 +85,7 @@ Aircraft Performance - These setting directly correlate the to the stats shown i
   
 Weapon Selection
   - All weapons with a checked box next to them will be included in the weapon pool for randomization
-  - NOTE: EUFB (the nuke) is not selected by default but can be enabled
+    - NOTE: EUFB (the nuke) is not selected by default but can be enabled
   - Unguided Chance: Sets the chance for a naturally unguided weapon to remain unguided
     - Decimal between 0 and 1
       - 0 = All unguided weapons will become guided
@@ -91,7 +98,7 @@ Weapon Attributes
   - Reload: time in seconds for how long it takes to reload a single hardpoint
   - Ammunition: The number of times a weapon can be fired
   - Loaded: the max number of time a weapon can be fired before waiting for reload
-    - e.g. unmodded ASM is 1, unmodded STDM is 2
+    - e.g. un-modded ASM is 1, un-modded STDM is 2
     - if a weapon has value exceeding the number of equipped hardpoints this value equals the hardpoint count
   - Max Locks: The number of enemies that can be simultaneously locked on to
     - In practice this is limited to equipped hardpoints * salvo size
