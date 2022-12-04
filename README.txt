@@ -103,7 +103,7 @@ Weapon Attributes
   - Max Locks: The number of enemies that can be simultaneously locked on to
     - In practice this is limited to equipped hardpoints * salvo size
       - e.g. 2 MLAA-3 hardpoints would be limited to 6 locks
-  - Range: The max distance in meters that weapon can lock onto a enemy from
+  - Range: The max distance in meters that weapon can lock onto an enemy from
   
   The following stats are exclusive to the gun pods (RGP, MGP, HGP, CGP), the Railgun uses the stats above
   - Gun Reload: the time in seconds between shots of a single gunpod

@@ -1,1 +1,1 @@
-pyinstaller -F --icon="randoIcon.ico" --clean PWRandomizer.py
+pyinstaller -F -w --icon="randoIcon.ico" --add-data "Banner1.png;." --clean PWRandomizer.py

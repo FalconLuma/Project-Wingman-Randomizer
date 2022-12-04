@@ -11,6 +11,16 @@ import sys
 import tkinter as tk
 from tkinter import ttk
 from enum import Enum
+from PIL import ImageTk,Image
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # Stores the number of weapons per slot for each plane
 class PlaneInfo(Enum):
@@ -40,10 +50,9 @@ class PlaneInfo(Enum):
     ACCIPTERC = [6,6,6,'AV-8_2']
 
 
-
 print("Launching Randomizer")
 
-#Window declared here
+# Window declared here
 window = tk.Tk()
 
 WEAPONSNAMES = [['MSSL', 'stdm', 'STDM'], ['MSSL_Multi2', 'stdm2', 'STDM-2'], ['HVSM', 'hvsm', 'HVSM'], ['HISM', 'hism', 'HISM'], ['RDBM', 'rdbm', 'RDBM'], ['BMLAA', 'bmlaa', 'BML-U'],
@@ -76,12 +85,14 @@ unguidedChance = 0.5
 
 attrs = ['InterpSpeed', 'MaxSpeed', 'Acceleration', 'RollSpeed', 'TurnSpeed', 'YawSpeed']
 
-npcAicraft = ['AJS-37', 'F-18E', 'F-18F', 'F-18EADV', 'SU-27', 'MIG-31', 'F-15C', 'F-14D', 'F-22', 'F-16C', 'C-17',
+"""
+npcAircraft = ['AJS-37', 'F-18E', 'F-18F', 'F-18EADV', 'SU-27', 'MIG-31', 'F-15C', 'F-14D', 'F-22', 'F-16C', 'C-17',
               'C-17_Fast', 'C-17_Faster', 'B-52', 'AS-02', 'DV-204', 'FC-8', 'SU-37', 'F-15SMTD', 'SU-30', 'F-4E',
               'PW-01', 'J-10B', 'SU-25', 'Spear', 'CruiseMissile', 'CruiseMissile_Buff', 'CF-8', 'QGMk3', 'BCS4',
               'MIG-29', 'MIG-21', 'AV-8', 'CHIMERA', 'CIV-8']
 naStatNames = ['BaseHP', 'RollSpeed', 'TurnSpeed', 'YawSpeed', 'DefaultSpeed', 'Acceleration']
 naStatRanges = [[10, 400], [15, 300], [5, 200], [5, 200], [400, 1000], [100, 600]]
+"""
 
 OpSlotRanges = [1, 11]
 
@@ -115,7 +126,6 @@ missionUnlockStrings = {
     'campaign_19':['mission_19'],
     'campaign_20':['mission_20'],
     'campaign_22':['campaignfinish','PW-001','SPEAR','mission_22']
-
 }
 
 missionPointers = dict()
@@ -125,7 +135,6 @@ for i, m in enumerate(missionIDList):
     else:
         missionPointers[m] = 'ending'
 
-print(missionPointers)
 filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
 
 rLoad = tk.BooleanVar()
@@ -134,8 +143,9 @@ rWeps = tk.BooleanVar()
 rOpSlot = tk.BooleanVar()
 rMission = tk.BooleanVar()
 repairUnlocks = tk.BooleanVar()
-# Generates a random seed
 
+
+# Generates a random seed
 def genSeed():
     t1.delete('1.0', 'end')
     seed = int(random.randrange(sys.maxsize))
@@ -144,6 +154,7 @@ def genSeed():
     t1.insert('end', str(seed))
     # Only allows one seed to be randomized
     b1.config(state='disabled')
+
 
 # Manages running the randomizer
 def runRando():
@@ -159,7 +170,7 @@ def runRando():
         # If the seed wasn't randomized runs a single rng to allow for random seeds to be repeatable
         random.randrange(sys.maxsize)
 
-    #Prepare weapons lists
+    # Prepare weapons lists
     i = 0
     while i < len(WEAPONSMASTER):
         if weaponsSelected[i]:
@@ -186,12 +197,11 @@ def runRando():
     dtp.writelines(dtpStart)
     dtp.close()
 
-    #npcAirRando(seed)
+    # npcAirRando(seed)
     if(rMission.get()):
         missionOrderRando(seed)
 
     dtp = open(filepath, "a")
-
 
     # Unlock normally unavailable weapons
     unlockText = ['            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Weapons/DWeaponDB.uexp": [\n',
@@ -775,7 +785,7 @@ def openSettings():
                 row = 0
                 col = col + 1
 
-    lblGuide = tk.Label(settings, text="Unguided Chance*", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
+    lblGuide = tk.Label(settings, text="Unguided Chance", bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=100)
     lblGuide.grid(row=6, column=6, rowspan=2)
 
     ugChance = tk.StringVar(settings, value=unguidedChance)
@@ -835,14 +845,22 @@ def openSettings():
 
     btn1 = tk.Button(settings, text="Save Settings", bg='#e7530c', command=saveSettings, width=25, font=('bold', 15))
     btn1.grid(row = 20, columnspan=7, pady=20)
-    text1 = "* Defines the chance that unguided weapons will NOT become guided. 0 = 0%, 1 = 100%"
-
-    lblInf1 = tk.Label(settings, text=text1, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=800)
-    lblInf1.grid(row=21, columnspan=7)
     settings.mainloop()
 
-l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma", bg='#303030', fg='#e7530c', pady=(10),font=('bold', 26))
-l1.pack()
+canvas_width = 550
+width = 550
+height = int((width/5348) * 2362)
+canvas_height = 150
+c1 = tk.Canvas(width=canvas_width, height=canvas_height, bg='#303030',border=0,highlightthickness=0)
+c1.pack()
+img = Image.open(resource_path('Banner1.png'))
+
+img = img.resize((width,height))
+img = ImageTk.PhotoImage(img)
+c1.create_image(canvas_width/2,canvas_height/2,anchor='c', image=img)
+
+#l1 = tk.Label(text="Project Wingman Randomizer\n by FalconLuma", bg='#303030', fg='#e7530c', pady=(10),font=('bold', 26))
+#l1.pack()
 
 l2 = tk.Label(text="Enter a seed or press the button to generate a random seed", bg='#303030', fg='#e7530c',
               font=('bold', 15), wraplength=400)
@@ -911,7 +929,7 @@ labelFinished = tk.Label(
     bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=500)
 
 labelError = tk.Label(
-    text="\nERROR: The mod file could not be created, ensure this program is located in your Project Wingman install folder and that the '~mods' folder exists in 'ProjectWingman\Content\Paks'",
+    text="\nERROR: The mod file could not be created, ensure this program is located in your Project Wingman install folder and that the '~mods' folder exists in 'ProjectWingman/Content/Paks'",
     bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=500)
 
 window.mainloop()
