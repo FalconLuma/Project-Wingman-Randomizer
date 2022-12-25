@@ -28,6 +28,13 @@ PWRando/dist
 PWRando/Build
 PWRandomizer 0.1/
 PWRandomizer 0.2/
+old/
+*.sav
+PWRando/u4pak-master
+PW-Randomizer_default_P.pak
+*.exe
+PWRando/ProjectWingmanRandomizer v0.1.bat
+*.ico
 *.zip
 *.spec
 DWeaponDB_docs.txt
