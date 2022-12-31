@@ -166,6 +166,7 @@ def gen_seed():
     t1.insert('end', str(seed))
     # Only allows one seed to be randomized
     b1.config(state='disabled')
+    t1.config(state='disabled')
 
 
 # Manages running the randomizer

@@ -1,5 +1,4 @@
 Project Wingman Randomizer by FalconLuma
-Randomizes weapons and performance for all standard aircraft
 
 -------------------------------------------------------------------------------------------------------------
 Distribution Sources
@@ -44,10 +43,11 @@ Randomizer Seed
   OR
   - Pressing 'Generate Random Seed' will create a random seed of a 20 digit long Integer
     - Using a generated seed will overwrite anything already in the text box
+    - Once a seed is generated both the textbox and button are disabled to ensure repeatability
  
 Attribute Randomizer Selection
   - Use the checkboxes to select what parts of the game to randomize
-    - Plane Performance teh SV-37: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
+    - Plane Performance: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
     - Plane Weapons: Randomizes the weapons available to each plane
     - Weapon Stats: Randomizes attributes for player weapons (Ammo, Reload, Range, etc.)
       - Due to game limitations, attributes such as damage and explosion radius cannot be modified
@@ -56,14 +56,14 @@ Attribute Randomizer Selection
       - If left unchecked all slots will have the same number of options as in an unmodified game
       - Any slots that normally have 0 options will not change
     - Mission Order: Randomizes the order of missions
-      - Does not affect the order of mission in Free Mission however the Menu name will be changed
+      - Does not affect the order of missions in the Free Mission menu however the menu names will be changed
       - NOTE: Black Flag will always be the first mission of the campaign for reasons outside my control
     - Normal Unlock Order: Alter the unlocks such that they are the same as in a normal campaign
       - i.e. No matter what mission is 2nd the SV-37 will be unlocked upon completion
       - if unchecked unlocks are tied to the mission itself
-        - i.e. Kings will always unlock the SP-34R and PW-MK.1 even if its the second mission in the campaign
+        - i.e. Kings will always unlock the SP-34R and PW-MK.1 even if it's the second mission in the campaign
       - This option is only available if Mission Order Randomization is enabled
-      - Recommended if you plan to do a New Game playthrough for a smoother experience
+      - Provides a smoother experience when enabled as your more likely to get a better plane earlier
 Weapon Variations 
   - Defaults to 1
   - Defines how many versions of each weapon should be created
@@ -75,7 +75,7 @@ Weapon Variations
 Advanced Settings
 -------------------------------------------------------------------------------------------------------------
 
-THE 'SAVE SETTINGS' BUTTON MUST BE PRESSED AND 'SETTINGS SAVED' TEXT MUST APPEAR FOR CHANGES TO TAKE EFFECT
+!THE 'SAVE SETTINGS' BUTTON MUST BE PRESSED AND 'SETTINGS SAVED' TEXT MUST APPEAR FOR CHANGES TO TAKE EFFECT!
 
 These setting allow you to fine tune the output of the randomizer by controlling the ranges that stats
 can be assigned. 
@@ -96,6 +96,7 @@ Aircraft Performance - These settings directly correlate to the stats shown in t
 Weapon Selection
   - All weapons with a checked box next to them will be included in the weapon pool for randomization
     - NOTE: EUFB (the nuke) is not selected by default but can be enabled
+    - Weapons that are not available in the base game, but are in files and work properly are included here
   - Unguided Chance: Sets the chance for a naturally unguided weapon to remain unguided
     - Decimal between 0 and 1
       - 0 = All unguided weapons will become guided
