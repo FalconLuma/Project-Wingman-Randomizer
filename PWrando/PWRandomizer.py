@@ -228,8 +228,8 @@ def run_rando():
                       '                            "type": "propertyValue"\n',
                       '                        }\n',
                       '                    ]\n',
-                      '                }\n',
-                      '            ]'
+                      '                }'
+
                       ]
         dtp.writelines(unlockText)
 
@@ -239,17 +239,25 @@ def run_rando():
             dtp.write(',\n')
         weapon_rando(seed, variants)
 
+    # Close DB_Weapons and open DB_Aircraft
+    with open(filepath, "a") as dtp:
+        dtp.write('            ],\n')
+        dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
+
     if rLoad.get():
         print('Randomizing Loadouts')
-        with open(filepath, "a") as dtp:
-            dtp.write(',\n')
         loadout_rando(seed)
 
     if rStats.get():
         print('Randomizing Aircraft Performance')
-        with open(filepath, "a") as dtp:
-            dtp.write(',\n')
+        if rLoad.get():
+            with open(filepath, "a") as dtp:
+                dtp.write(',\n')
         stat_rando(seed)
+
+    # Close DB_Aircraft
+    with open(filepath, "a") as dtp:
+        dtp.write('            ]')
 
     if rMission.get():
         print('Randomizing Mission Order')
@@ -289,8 +297,6 @@ def loadout_rando(seed):
     random.shuffle(weaponsMaster)
 
     with open(filepath, "a") as dtp:
-        dtp.write(
-            '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
         # unlock fixed weapons (SPEAR and PWMK1)
         unfixText = ['                {\n',
                      '                    "name": "un-fix loadouts",\n',
@@ -313,8 +319,7 @@ def loadout_rando(seed):
                           '                    "patches": [\n',
                           '                        {\n',
                           '                            "description": "Calibrate HardpointCompatibilityList",\n',
-                          '                            "template": "datatable:[' + "'" + PLANE.value[
-                              3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''',
+                          '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '''].[0].{'HardpointCompatibilityList*'}",\n''''',
                           '                            "value": "StrProperty:[' + "'" + 'stdm'
                           ]
             dtp.writelines(modTextTop)
@@ -365,15 +370,11 @@ def loadout_rando(seed):
             dtp.write('                    ]\n                }')
             if PLANE.value[3] != 'AV-8_2':
                 dtp.write(',\n')
-        dtp.write('            ]')
-
 
 def stat_rando(seed):
     random.seed(seed)
 
     with open(filepath, "a") as dtp:
-        dtp.write(
-            '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
         # Iterate over all the planes
         for PLANE in PlaneInfo:
             response = round(random.uniform(pStatRanges[0][0], pStatRanges[0][1]), 1)
@@ -408,15 +409,11 @@ def stat_rando(seed):
             if PLANE.value[3] != 'AV-8_2':
                 dtp.write(',')
             dtp.write('\n')
-        dtp.write('            ]')
-
 
 def weapon_rando(seed, variants):
     with open(filepath, "a") as dtp:
         weaponsMaster.clear()
         random.seed(seed)
-        dtp.writelines(
-            ['            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Weapons/DWeaponDB.uexp": [\n', ])
         for w in weaponsNames:
             var = range(variants)
             for n in var:
@@ -538,8 +535,6 @@ def weapon_rando(seed, variants):
                     dtp.write('\n')
                 else:
                     dtp.write(',\n')
-        dtp.write('            ]')
-
 
 def mission_order_rando(seed):
     with open(filepath, "a") as dtp:
