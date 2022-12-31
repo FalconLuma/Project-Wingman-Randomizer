@@ -2,6 +2,13 @@ Project Wingman Randomizer by FalconLuma
 Randomizes weapons and performance for all standard aircraft
 
 -------------------------------------------------------------------------------------------------------------
+Distribution Sources
+-------------------------------------------------------------------------------------------------------------
+https://www.nexusmods.com/projectwingman/mods/355 - Stable version, not updated regularly
+https://github.com/FalconLuma/Project-Wingman-Randomizer - Likely to be more up-to-date then Nexus, both 
+                                                           stable and experimental builds
+
+-------------------------------------------------------------------------------------------------------------
 Compatibility
 -------------------------------------------------------------------------------------------------------------
 
@@ -44,6 +51,7 @@ Attribute Randomizer Selection
     - Plane Weapons: Randomizes the weapons available to each plane
     - Weapon Stats: Randomizes attributes for player weapons (Ammo, Reload, Range, etc.)
       - Due to game limitations, attributes such as damage and explosion radius cannot be modified
+      - When using this option the normal weapon descriptions will be replaced with the new weapon stats
     - Options/Slot: Randomizes how many weapon options are available for every weapon slot on every plane
       - If left unchecked all slots will have the same number of options as in an unmodified game
       - Any slots that normally have 0 options will not change
@@ -77,6 +85,8 @@ can be assigned.
 Aircraft Performance - These settings directly correlate to the stats shown in the hangar
   - Response: Controls how long it takes for an input to be fully realised - higher is faster
     - e.g. how long it takes to move the ailerons from a neutral position to the requested position
+    - Also affects the camera lag when manuevoring
+    - This is an arbitary unit
   - Speed: The top speed of the aircraft in km/h
   - Acceleration: How quickly the aircraft accelerates - higher is faster
   - Roll: How quickly the aircraft will roll - higher is faster
@@ -90,9 +100,10 @@ Weapon Selection
     - Decimal between 0 and 1
       - 0 = All unguided weapons will become guided
       - 1 = All unguided weapons will stay unguided
-      - Any values in this range = each unguided weapon will become guided at the set probability
+      - Any values in this range = probability at which each unguided weapon will become guided
       - Any value outside this range will be rounded to either 0 or 1 whichever is closer
   - Options per Slot: The min and max number of weapons that will available for each weapon slot
+      - Any slot on an aircraft can have between 1 and the given value slots
       
 Weapon Attributes
   - Reload: time in seconds for how long it takes to reload a single hardpoint
@@ -106,5 +117,5 @@ Weapon Attributes
   - Range: The max distance in meters that weapon can lock onto an enemy from
   
   The following stats are exclusive to the gun pods (RGP, MGP, HGP, CGP), the Railgun uses the stats above
-  - Gun Reload: the time in seconds between shots of a single gunpod
+  - Gun Reload: the time in seconds between shots for a single gunpod
   - Gun Ammo: The number of shots a single slot of a gunpod has.
