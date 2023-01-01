@@ -51,9 +51,6 @@ class PlaneInfo(Enum):
     MG21C = [3, 0, 0, 'MiG-21_2']
     ACCIPTERC = [6, 6, 6, 'AV-8_2']
 
-
-print("Launching Randomizer")
-
 # Window declared here
 window = tk.Tk()
 
@@ -118,14 +115,14 @@ missionIDList = ['campaign_02', 'campaign_03', 'campaign_04', 'campaign_05', 'ca
 
 missionUnlockStrings = {
     'campaign_02': ['mission_02', 'AJS-37'],
-    'campaign_03': ['mission_03', 'CF-105', 'Su-25'],
+    'campaign_03': ['mission_03', 'CF-105', 'Su-25'], # A-10A
     'campaign_04': ['mission_04', 'MIG-31', 'F-16C'],
     'campaign_05': ['mission_05', 'F-14D', 'MiG-29'],
     'campaign_06': ['mission_06', 'A-10A', 'AV-8'],
     'campaign_07': ['mission_07', 'F-18E', 'SU-27'],
     'campaign_08': ['mission_08', 'F-15C'],
     'campaign_09': ['mission_09', 'Su-30', 'RF-1'],
-    'campaign_10': ['mission_10', 'Su-47'],
+    'campaign_10': ['mission_10', 'Su-47'], # FT-15
     'campaign_11': ['mission_11'],
     'campaign_13': ['mission_13', 'ACG-01', 'F-15SMTD'],
     'campaign_14': ['mission_14'],
@@ -267,12 +264,12 @@ def run_rando():
         mission_order_rando(seed)
 
     if rAirNpc.get():
-        print('Randomizing Mission Order')
+        print('Randomizing NPCs')
         with open(filepath, "a") as dtp:
             dtp.write(',\n')
         npc_air_rando(seed)
 
-        # Close the dtp file
+    # Close the dtp file
     dtp = open(filepath, "a")
     dtpEnd = ['        }\n',
               '    }]\n',
@@ -280,10 +277,9 @@ def run_rando():
 
     dtp.writelines(dtpEnd)
     dtp.close()
+    # Display a message when the randomizer is finished
     print('Finished Randomizing')
     print('Depending on your settings Project Sicario Merger may take more than a minute to run')
-    # Display a message when the randomizer is finished
-
     labelFinished.pack()
     labelError.destroy()
     b2.config(state='disabled')
@@ -592,7 +588,6 @@ def mission_order_rando(seed):
 
 
 def npc_air_rando(seed):
-    print('hi')
     with open(filepath, "a") as dtp:
         random.seed(seed)
 
@@ -664,6 +659,8 @@ def npc_air_rando(seed):
 ########################################################################################################################
 
 if __name__ == "__main__":
+    print('Opening Randomizer')
+
     window.title('Project Wingman Randomizer')
     window.geometry('550x800+100+100')
     window.config(bg='#303030')
@@ -703,7 +700,7 @@ if __name__ == "__main__":
             for x in TweaponsSelected:
                 finalValue.append(x.get())
             weaponsSelected = finalValue
-            print(weaponsSelected)
+            #print(weaponsSelected)
 
         def p_stat_states():
             finalValue = []
@@ -724,7 +721,7 @@ if __name__ == "__main__":
                 else:
                     finalValue.append([int(x[0].get()), int(x[1].get())])
             pStatRanges = finalValue
-            print(pStatRanges)
+            #print(pStatRanges)
 
         def w_stat_states():
             finalValue = []
@@ -745,7 +742,7 @@ if __name__ == "__main__":
                 else:
                     finalValue.append([int(x[0].get()), int(x[1].get())])
             wStatRanges = finalValue
-            print(wStatRanges)
+            #print(wStatRanges)
 
         settings = tk.Tk()
         settings.title('Project Wingman Randomizer Setings')
