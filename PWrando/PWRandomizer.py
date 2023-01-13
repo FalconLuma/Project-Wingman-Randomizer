@@ -67,17 +67,48 @@ WEAPONSNAMES = [['MSSL', 'stdm', 'STDM'], ['MSSL_Multi2', 'stdm2', 'STDM-2'], ['
                 ['Gunpod_LITE', 'rgp', 'RGP'], ['Gunpod_MID', 'mgp', 'MGP'], ['Gunpod_HVY', 'hgp', 'HGP'],
                 ['Gunpod_CAN', 'cgp', 'CGP'], ['RailgunGunpod', 'rgpd', 'RG']]
 
+BWWEAPONSNAMES = [['MSSL', 'stdm', 'STDM'], ['MSSL_Multi2', 'stdm2', 'STDM-2'], ['HVSM', 'hvsm', 'HVSM'],
+                ['HISM', 'hism', 'HISM'], ['RDBM', 'rdbm', 'RDBM'], ['BMLAA', 'bmlaa', 'BML-U'],
+                ['XMA4', 'mlaa', 'MLAA'], ['XMA4_Multi2', 'mlaa2', 'MLAA-2'], ['XMA4_Multi3', 'mlaa3', 'MLAA-3'],
+                ['SAAM', 'saa', 'SAA'], ['BW_XLAA', 'bwxlaa', 'XLAA'], ['QAAM', 'hmaa', 'HPAA'],
+                ['ASM', 'asm', 'ASM'], ['AGM', 'mlag', 'MLAG'], ['AGM_Multi2', 'mlag2', 'MLAG-2'],
+                ['GBS', 'gbs', 'GBS'], ['GBS_Multi3', 'gbs3', 'GBS-3'], ['BW_GBL','bwgbl','GBL'], ['BW_XASM', 'bwxasm', 'XASM'],
+                ['UGBS', 'ugbs', 'UGBS'], ['UGBS_Multi3', 'ugbs3', 'UGBS-3'], ['UGBL', 'ugbl', 'UGBL'],
+                ['DropTank', 'droptank', 'DT'], ['EUFB', 'eufb', 'EUFB'], ['BDU16', 'bdu16', 'BDU-16'],
+                ['URS', 'urs', 'URS'], ['URM', 'urm', 'URM'], ['URMB', 'urmb', 'URMB'], ['BW_GRS', 'bwgrs', 'GRS'],
+                ['SR', 'sr', 'ADM'], ['SR-2', 'sr2', 'ADM-2'],
+                ['Gunpod_LITE', 'rgp', 'RGP'], ['Gunpod_MID', 'mgp', 'MGP'], ['Gunpod_HVY', 'hgp', 'HGP'],
+                ['Gunpod_CAN', 'cgp', 'CGP'], ['RailgunGunpod', 'rgpd', 'RG']]
+
 WEAPONSMASTER = ['stdm', 'stdm2', 'hvsm', 'hism', 'rdbm', 'bmlaa',
                  'mlaa', 'mlaa2', 'mlaa3', 'saa',
                  'asm', 'mlag', 'mlag2', 'gbs', 'gbs3',
                  'ugbs', 'ugbs3', 'ugbl', 'droptank', 'eufb', 'bdu16',
                  'urs', 'urm', 'urmb', 'sr', 'sr2', 'rgp', 'mgp', 'hgp', 'cgp', 'rgpd']
 
+BWWEAPONSMASTER = ['stdm', 'stdm2', 'hvsm', 'hism', 'rdbm', 'bmlaa',
+                 'mlaa', 'mlaa2', 'mlaa3', 'saa', 'bwxlaa', 'hmaa',
+                 'asm', 'mlag', 'mlag2', 'gbs', 'gbs3', 'bwgbl', 'bwxasm',
+                 'ugbs', 'ugbs3', 'ugbl', 'droptank', 'eufb', 'bdu16',
+                 'urs', 'urm', 'urmb', 'bwgrs', 'sr', 'sr2',
+                 'rgp', 'mgp', 'hgp', 'cgp', 'rgpd']
+
 weaponsNames = []
 weaponsMaster = []
 
-weaponsSelected = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True,
-                   True, True, False, True, True, True, True, True, True, True, True, True, True, True]
+weaponsSelected = [True, True, True, True, True, True,
+                   True, True, True, True,
+                   True, True, True, True, True,
+                   True, True,True, True, False, True,
+                   True, True, True, True, True,
+                   True, True, True, True, True]
+
+bwweaponsSelected = [True, True, True, True, True, True,
+                     True, True, True, True, True, True,
+                     True, True, True, True, True, True, True,
+                     True, True, True, True, False, True,
+                     True, True, True, True, True, True,
+                     True, True, True, True, True]
 
 # Plane Stat Ranges [Min, Max] Tuples
 pStatNames = ['Response', 'Speed', 'Accel', 'Roll', 'Turn', 'Yaw']
@@ -151,6 +182,7 @@ rWeps = tk.BooleanVar()
 rOpSlot = tk.BooleanVar()
 rMission = tk.BooleanVar()
 repairUnlocks = tk.BooleanVar()
+BWcompatibility = tk.BooleanVar()
 rAirNpc = tk.BooleanVar(value=False)
 
 
@@ -182,10 +214,18 @@ def run_rando():
 
     # Prepare weapons lists
     i = 0
-    while i < len(WEAPONSMASTER):
-        if weaponsSelected[i]:
-            weaponsNames.append(WEAPONSNAMES[i])
-            weaponsMaster.append(WEAPONSMASTER[i])
+    if BWcompatibility.get():
+        wm = BWWEAPONSMASTER
+        wn = BWWEAPONSNAMES
+        ws = bwweaponsSelected
+    else:
+        wm = WEAPONSMASTER
+        wn = WEAPONSNAMES
+        ws = weaponsSelected
+    while i < len(wm):
+        if ws[i]:
+            weaponsNames.append(wn[i])
+            weaponsMaster.append(wm[i])
         i = i + 1
 
     # Try to open/create the dtp, at minimum the ~mods folder must exist, otherwise display an error message
@@ -781,18 +821,26 @@ if __name__ == "__main__":
                 col = col + 1
 
         # ----------Weapon Select----------
-        TweaponsSelected = [tk.BooleanVar(settings, value=weaponsSelected[i]) for i in range(len(WEAPONSMASTER))]
+        if BWcompatibility.get():
+            wm = BWWEAPONSMASTER
+            wn = BWWEAPONSNAMES
+            ws = bwweaponsSelected
+            colLen = [6, 6, 7, 6, 6, 5]
+        else:
+            wm = WEAPONSMASTER
+            wn = WEAPONSNAMES
+            ws = weaponsSelected
+            colLen = [6, 4, 5, 6, 5, 5]
+        TweaponsSelected = [tk.BooleanVar(settings, value=ws[i]) for i in range(len(wm))]
 
         l1 = tk.Label(settings, text="Select Weapons", bg='#303030', fg='#e7530c', font=('bold', 20))
         l1.grid(row=5, columnspan=7)
 
         colHead = ["General", "Air to Air", "A2G Guided", "A2G Unguided", "Rockets", "Guns"]
-        colLen = [6, 4, 5, 6, 5, 5]
-
         def create_checkboxes():
             col = 0
             row = 0
-            for x, y in zip(TweaponsSelected, WEAPONSNAMES):
+            for x, y in zip(TweaponsSelected, wn):
                 if row == 0:
                     lh = tk.Label(settings, text=colHead[col], bg='#303030', fg='#e7530c', font=('bold', 15))
                     lh.grid(row=6, column=col)
@@ -842,7 +890,7 @@ if __name__ == "__main__":
 
         l3 = tk.Label(settings, text="Define Min and Max values for Weapon Attributes", bg='#303030', fg='#e7530c',
                       font=('bold', 20))
-        l3.grid(row=14, columnspan=7)
+        l3.grid(row=16, columnspan=7)
 
         def create_weapon_stat_text():
             col = 0
@@ -850,9 +898,9 @@ if __name__ == "__main__":
                 label1 = tk.Label(settings, text=y, bg='#303030', fg='#e7530c', font=('bold', 15), wraplength=400)
                 textMin = ttk.Entry(settings, textvariable=x[0])
                 textMax = ttk.Entry(settings, textvariable=x[1])
-                label1.grid(row=15, column=col)
-                textMin.grid(row=16, column=col, padx=5)
-                textMax.grid(row=17, column=col, padx=5)
+                label1.grid(row=17, column=col)
+                textMin.grid(row=18, column=col, padx=5)
+                textMax.grid(row=19, column=col, padx=5)
                 col = col + 1
 
         """
@@ -876,7 +924,7 @@ if __name__ == "__main__":
 
         btn1 = tk.Button(settings, text="Save Settings", bg='#e7530c', command=save_settings, width=25,
                          font=('bold', 15))
-        btn1.grid(row=20, columnspan=7, pady=20)
+        btn1.grid(row=22 , columnspan=7, pady=20)
         settings.mainloop()
 
 
@@ -943,6 +991,10 @@ if __name__ == "__main__":
     c6 = tk.Checkbutton(window, text='Normal Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=repairUnlocks, onvalue=True, offvalue=False, state='disabled')
     c6.pack()
+
+    c7 = tk.Checkbutton(window, text='Balanced Wingman Compatibility', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=BWcompatibility, onvalue=True, offvalue=False)
+    c7.pack()
 
     l4 = tk.Label(text="Enter the number of variations of each weapon", bg='#303030', fg='#e7530c',
                   font=('bold', 15), wraplength=500)
