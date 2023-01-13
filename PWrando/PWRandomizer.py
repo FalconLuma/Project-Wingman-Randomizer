@@ -460,6 +460,10 @@ def weapon_rando(seed, variants):
                 # Reload, Ammo, Proj, Salvo, Range, GunReload, GunAmmo
                 stats = []  # Reload,Ammo,Proj,Salvo,Range
                 i = 0
+                if BWcompatibility.get():
+                    ugList = ['ugbl', 'ugbs', 'ugbs3', 'droptank', 'eufb', 'bdu16', 'urs', 'urm', 'urmb']
+                else:
+                    ugList = ['ugbl', 'ugbs', 'ugbs3', 'droptank', 'eufb', 'bdu16', 'urs', 'urm', 'urmb', 'sr', 'sr2']
                 while i < 5:
                     if i == 0:
                         if w[1] in ['rgp', 'mgp', 'hgp', 'cgp']:
@@ -487,7 +491,7 @@ def weapon_rando(seed, variants):
                         else:
                             v = float(random.randint(wStatRanges[4][0], wStatRanges[4][1]))
                         # Give unguided weapons a chance to be unguided
-                        if w[1] in ['ugbl', 'ugbs', 'ugbs3', 'droptank', 'eufb', 'bdu16', 'urs', 'urm', 'urmb', 'sr', 'sr2']:
+                        if w[1] in ugList:
                             c = round(random.uniform(0, 1), 2)
                             if unguidedChance >= c:
                                 v = 0
