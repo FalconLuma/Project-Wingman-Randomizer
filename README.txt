@@ -64,6 +64,8 @@ Attribute Randomizer Selection
         - i.e. Kings will always unlock the SP-34R and PW-MK.1 even if it's the second mission in the campaign
       - This option is only available if Mission Order Randomization is enabled
       - Provides a smoother experience when enabled as your more likely to get a better plane earlier
+    - Balanced Wingman Comaptibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
+      - Requires Balanced Wingman is installed and above the randomizer in load order (should be by default)
 Weapon Variations 
   - Defaults to 1
   - Defines how many versions of each weapon should be created
