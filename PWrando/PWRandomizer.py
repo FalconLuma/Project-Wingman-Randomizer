@@ -50,6 +50,14 @@ class PlaneInfo(Enum):
     CR105C = [5, 6, 5, 'CF-105_2']
     MG21C = [3, 0, 0, 'MiG-21_2']
     ACCIPTERC = [6, 6, 6, 'AV-8_2']
+    G10 = [8,8,8, 'A-10A']
+    FF18 = [2,10,1,'F-18F']
+    SK30 = [6, 3, 0, 'Su-30']
+    W10B = [5,1,0,'J-10B']
+    FT15 = [3,2,3,'FT-15']
+    X16 = [5,5,0,'X-16']
+
+UnreleasedPlanes = ['A-10A','F-18F','Su-30','J-10B','FT-15','X-16']
 
 # Window declared here
 window = tk.Tk()
@@ -138,29 +146,27 @@ missionNames = ['C02_Frontiers', 'C03_Homestead', 'C04_Uphill', 'C05_Sirens', 'C
                 'C13_MidnightLight', 'C14_Valkyrie', 'C15_OpenSeason', 'C16_ConsequenceOf', 'C16B_Unfortunate',
                 'C17_NoRespite', 'C18_Return', 'C19_RedSea', 'C20_Presidia', 'C22_Kings']
 
-missionIDList = ['campaign_02', 'campaign_03', 'campaign_04', 'campaign_05', 'campaign_06', 'campaign_07',
-                 'campaign_08',
-                 'campaign_09', 'campaign_10', 'campaign_11', 'campaign_13', 'campaign_14', 'campaign_15',
-                 'campaign_16',
+missionIDList = ['campaign_02', 'campaign_03', 'campaign_04', 'campaign_05', 'campaign_06', 'campaign_07','campaign_08',
+                 'campaign_09', 'campaign_10', 'campaign_11', 'campaign_13', 'campaign_14', 'campaign_15','campaign_16',
                  'campaign_16.2', 'campaign_17', 'campaign_18', 'campaign_19', 'campaign_20', 'campaign_22']
 
 missionUnlockStrings = {
-    'campaign_02': ['mission_02', 'AJS-37'],
-    'campaign_03': ['mission_03', 'CF-105', 'Su-25'], # A-10A
+    'campaign_02': ['mission_02', 'AJS-37','J-10B'],  # 'J10B'
+    'campaign_03': ['mission_03', 'CF-105', 'Su-25'],
     'campaign_04': ['mission_04', 'MIG-31', 'F-16C'],
     'campaign_05': ['mission_05', 'F-14D', 'MiG-29'],
-    'campaign_06': ['mission_06', 'A-10A', 'AV-8'],
+    'campaign_06': ['mission_06', 'A-10A', 'AV-8', 'X-16Z'],  # 'A-10A', 'X-16'
     'campaign_07': ['mission_07', 'F-18E', 'SU-27'],
     'campaign_08': ['mission_08', 'F-15C'],
-    'campaign_09': ['mission_09', 'Su-30', 'RF-1'],
-    'campaign_10': ['mission_10', 'Su-47'], # FT-15
+    'campaign_09': ['mission_09', 'Su-30', 'F-18F'],  # 'Su-30', 'F-18F'
+    'campaign_10': ['mission_10', 'FT-15'],  # 'FT-15'
     'campaign_11': ['mission_11'],
     'campaign_13': ['mission_13', 'ACG-01', 'F-15SMTD'],
     'campaign_14': ['mission_14'],
-    'campaign_15': ['mission_15', 'F-15E', 'SU-37'],
+    'campaign_15': ['mission_15', 'SU-37'],
     'campaign_16': ['mission_16'],
     'campaign_16.2': ['mission_16.2'],
-    'campaign_17': ['mission_17', 'F-22', 'Su-57'],
+    'campaign_17': ['mission_17', 'F-22'],
     'campaign_18': ['mission_18'],
     'campaign_19': ['mission_19'],
     'campaign_20': ['mission_20'],
@@ -176,6 +182,7 @@ for i, m in enumerate(missionIDList):
 
 filepath = r"./ProjectWingman/Content/Paks/~mods/pw-randomizer.dtp"
 
+Unreleased = tk.BooleanVar()
 rLoad = tk.BooleanVar()
 rStats = tk.BooleanVar()
 rWeps = tk.BooleanVar()
@@ -267,7 +274,6 @@ def run_rando():
                       '                        }\n',
                       '                    ]\n',
                       '                }'
-
                       ]
         dtp.writelines(unlockText)
 
@@ -281,6 +287,49 @@ def run_rando():
     with open(filepath, "a") as dtp:
         dtp.write('            ],\n')
         dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
+
+        if Unreleased.get():
+            for p in UnreleasedPlanes:
+                unlockText = ['                {\n',
+                              '                    "name": "' + p + '",\n',
+                              '                    "patches": [\n',
+                              '                        {\n',
+                              '                            "description": "Make Available",\n',
+                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Available*'}.<BoolProperty>",\n''',
+                              '                            "value": "BoolProperty:true",\n',
+                              '                            "type": "propertyValue"\n',
+                              '                        },\n',
+                              '                        {\n',
+                              '                            "description": "Make Sellable",\n',
+                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Sellable*'}.<BoolProperty>",\n''',
+                              '                            "value": "BoolProperty:true",\n',
+                              '                            "type": "propertyValue"\n',
+                              '                        }\n',
+                              '                    ]\n',
+                              '                },\n',
+                            ]
+                dtp.writelines(unlockText)
+                if p == 'J-10B':
+                    unlockText = ['                {\n',
+                                  '                    "name": "' + p + ' Info",\n',
+                                  '                    "patches": [\n',
+                                  '                        {\n',
+                                  '                            "description": "Name",\n',
+                                  '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'IndicatorName*'}.<TextProperty>",\n''',
+                                  '                            "value": "TextProperty:W-10B",\n',
+                                  '                            "type": "propertyValue"\n',
+                                  '                        },\n',
+                                  '                        {\n',
+                                  '                            "description": "Price",\n',
+                                  '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'Price*'}.<IntProperty>",\n''',
+                                  '                            "value": "IntProperty:' + "'" + str(5500) + "'" + '",\n',
+                                  '                            "type": "propertyValue"\n',
+                                  '                        }\n',
+                                  '                    ]\n',
+                                  '                },\n',
+                                  ]
+                    dtp.writelines(unlockText)
+
 
     if rLoad.get():
         print('Randomizing Loadouts')
@@ -395,17 +444,15 @@ def loadout_rando(seed):
 
             gunRandoText = ['                        {\n',
                             '                            "description": "Calibrate CannonType",\n',
-                            '                            "template": "datatable:[' + "'" + PLANE.value[
-                                3] + "'" + '].[0].{' + "'" + 'BaseStats*' + "'" + '}.{' + "'" + 'CannonType*' + "'" + '}.<S_CannonType::>",\n',
-                            '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(
-                                random.randint(0, 2)) + "'" + '",\n',
+                            '                            "template": "datatable:[' + "'" + PLANE.value[3] + "'" + '].[0].{' + "'" + 'BaseStats*' + "'" + '}.{' + "'" + 'CannonType*' + "'" + '}.<S_CannonType::>",\n',
+                            '                            "value": "ByteProperty:' + "'" + 'S_CannonType::NewEnumerator' + str(random.randint(0, 2)) + "'" + '",\n',
                             '                            "type": "propertyValue"\n',
                             '                        }\n'
                             ]
             dtp.writelines(gunRandoText)
 
             dtp.write('                    ]\n                }')
-            if PLANE.value[3] != 'AV-8_2':
+            if PLANE.value[3] != 'X-16':
                 dtp.write(',\n')
 
 def stat_rando(seed):
@@ -443,7 +490,7 @@ def stat_rando(seed):
                     dtp.write(",\n")
                 i = i + 1
             dtp.write('\n                    ]\n                }')
-            if PLANE.value[3] != 'AV-8_2':
+            if PLANE.value[3] != 'X-16':
                 dtp.write(',')
             dtp.write('\n')
 
@@ -630,7 +677,6 @@ def mission_order_rando(seed):
         ]
         dtp.writelines(closeText)
 
-
 def npc_air_rando(seed):
     with open(filepath, "a") as dtp:
         random.seed(seed)
@@ -789,7 +835,7 @@ if __name__ == "__main__":
             #print(wStatRanges)
 
         settings = tk.Tk()
-        settings.title('Project Wingman Randomizer Setings')
+        settings.title('Project Wingman Randomizer Settings')
         settings.geometry('950x700+700+100')
         settings.config(bg='#303030')
         lHeading = tk.Label(settings, text='Advanced Settings', bg='#303030', fg='#e7530c', font=('bold', 26))
@@ -964,6 +1010,10 @@ if __name__ == "__main__":
     l3 = tk.Label(text="Please select what attributes you would like to randomize:",
                   bg='#303030', fg='#e7530c',font=('bold', 15), wraplength=500)
     l3.pack()
+
+    cU = tk.Checkbutton(window, text='Add Unreleased Planes', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=Unreleased, onvalue=True, offvalue=False)
+    cU.pack()
 
     c2 = tk.Checkbutton(window, text='Randomize Plane Performance', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rStats, onvalue=True, offvalue=False)
