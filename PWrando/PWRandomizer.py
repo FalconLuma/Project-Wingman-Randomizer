@@ -155,11 +155,11 @@ missionUnlockStrings = {
     'campaign_03': ['mission_03', 'CF-105', 'Su-25'],
     'campaign_04': ['mission_04', 'MIG-31', 'F-16C'],
     'campaign_05': ['mission_05', 'F-14D', 'MiG-29'],
-    'campaign_06': ['mission_06', 'A-10A', 'AV-8', 'X-16Z'],  # 'A-10A', 'X-16'
+    'campaign_06': ['mission_06', 'A-10A', 'AV-8', 'X-16Z'],  # 'A-10A', 'X-16Z'
     'campaign_07': ['mission_07', 'F-18E', 'SU-27'],
     'campaign_08': ['mission_08', 'F-15C'],
     'campaign_09': ['mission_09', 'Su-30', 'F-18F'],  # 'Su-30', 'F-18F'
-    'campaign_10': ['mission_10', 'FT-15'],  # 'FT-15'
+    'campaign_10': ['mission_10', 'F-15T'],  # 'F-15T'
     'campaign_11': ['mission_11'],
     'campaign_13': ['mission_13', 'ACG-01', 'F-15SMTD'],
     'campaign_14': ['mission_14'],
@@ -288,48 +288,8 @@ def run_rando():
         dtp.write('            ],\n')
         dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_Aircraft.uexp": [\n')
 
-        if Unreleased.get():
-            for p in UnreleasedPlanes:
-                unlockText = ['                {\n',
-                              '                    "name": "' + p + '",\n',
-                              '                    "patches": [\n',
-                              '                        {\n',
-                              '                            "description": "Make Available",\n',
-                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Available*'}.<BoolProperty>",\n''',
-                              '                            "value": "BoolProperty:true",\n',
-                              '                            "type": "propertyValue"\n',
-                              '                        },\n',
-                              '                        {\n',
-                              '                            "description": "Make Sellable",\n',
-                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Sellable*'}.<BoolProperty>",\n''',
-                              '                            "value": "BoolProperty:true",\n',
-                              '                            "type": "propertyValue"\n',
-                              '                        }\n',
-                              '                    ]\n',
-                              '                },\n',
-                            ]
-                dtp.writelines(unlockText)
-                if p == 'J-10B':
-                    unlockText = ['                {\n',
-                                  '                    "name": "' + p + ' Info",\n',
-                                  '                    "patches": [\n',
-                                  '                        {\n',
-                                  '                            "description": "Name",\n',
-                                  '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'IndicatorName*'}.<TextProperty>",\n''',
-                                  '                            "value": "TextProperty:W-10B",\n',
-                                  '                            "type": "propertyValue"\n',
-                                  '                        },\n',
-                                  '                        {\n',
-                                  '                            "description": "Price",\n',
-                                  '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'Price*'}.<IntProperty>",\n''',
-                                  '                            "value": "IntProperty:' + "'" + str(5500) + "'" + '",\n',
-                                  '                            "type": "propertyValue"\n',
-                                  '                        }\n',
-                                  '                    ]\n',
-                                  '                },\n',
-                                  ]
-                    dtp.writelines(unlockText)
-
+    if Unreleased.get():
+        add_unreleased()
 
     if rLoad.get():
         print('Randomizing Loadouts')
@@ -351,6 +311,10 @@ def run_rando():
         with open(filepath, "a") as dtp:
             dtp.write(',\n')
         mission_order_rando(seed)
+    elif Unreleased.get():
+        with open(filepath, "a") as dtp:
+            dtp.write(',\n')
+        unreleased_unlock_strings()
 
     if rAirNpc.get():
         print('Randomizing NPCs')
@@ -359,13 +323,12 @@ def run_rando():
         npc_air_rando(seed)
 
     # Close the dtp file
-    dtp = open(filepath, "a")
-    dtpEnd = ['        }\n',
-              '    }]\n',
-              '}']
+    with open(filepath, "a") as dtp:
+        dtpEnd = ['        }\n',
+                  '    }]\n',
+                  '}']
 
-    dtp.writelines(dtpEnd)
-    dtp.close()
+        dtp.writelines(dtpEnd)
     # Display a message when the randomizer is finished
     print('Finished Randomizing')
     print('Depending on your settings Project Sicario Merger may take more than a minute to run')
@@ -373,6 +336,48 @@ def run_rando():
     labelError.destroy()
     b2.config(state='disabled')
 
+def add_unreleased():
+    with open(filepath,"a") as dtp:
+        for p in UnreleasedPlanes:
+            unlockText = ['                {\n',
+                          '                    "name": "' + p + '",\n',
+                          '                    "patches": [\n',
+                          '                        {\n',
+                          '                            "description": "Make Available",\n',
+                          '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Available*'}.<BoolProperty>",\n''',
+                          '                            "value": "BoolProperty:true",\n',
+                          '                            "type": "propertyValue"\n',
+                          '                        },\n',
+                          '                        {\n',
+                          '                            "description": "Make Sellable",\n',
+                          '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'ID_101*'}.{'Sellable*'}.<BoolProperty>",\n''',
+                          '                            "value": "BoolProperty:true",\n',
+                          '                            "type": "propertyValue"\n',
+                          '                        }\n',
+                          '                    ]\n',
+                          '                },\n',
+                          ]
+            dtp.writelines(unlockText)
+            if p == 'J-10B':
+                unlockText = ['                {\n',
+                              '                    "name": "' + p + ' Info",\n',
+                              '                    "patches": [\n',
+                              '                        {\n',
+                              '                            "description": "Name",\n',
+                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'IndicatorName*'}.<TextProperty>",\n''',
+                              '                            "value": "TextProperty:W-10B",\n',
+                              '                            "type": "propertyValue"\n',
+                              '                        },\n',
+                              '                        {\n',
+                              '                            "description": "Price",\n',
+                              '                            "template": "datatable:[' + "'" + p + "'" + '''].[0].{'Price*'}.<IntProperty>",\n''',
+                              '                            "value": "IntProperty:' + "'" + str(5500) + "'" + '",\n',
+                              '                            "type": "propertyValue"\n',
+                              '                        }\n',
+                              '                    ]\n',
+                              '                },\n',
+                              ]
+                dtp.writelines(unlockText)
 
 def loadout_rando(seed):
     random.seed(seed)
@@ -623,6 +628,38 @@ def weapon_rando(seed, variants):
                     dtp.write('\n')
                 else:
                     dtp.write(',\n')
+
+def unreleased_unlock_strings():
+    with open(filepath, "a") as dtp:
+        openText = [
+            '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Levels/DB_ProjectWingmanLevelList.uexp": [\n',
+            '                {\n',
+            '                    "name": "Update Unlcok Strings",\n',
+            '                    "patches": [\n',
+        ]
+        dtp.writelines(openText)
+
+        for i, m in enumerate(missionNames):
+            unlockText = [
+                '                        {\n',
+                '                            "description": "",\n',
+                '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
+                '                            "value": "StrProperty:' + str(missionUnlockStrings[missionIDList[i]]) + '",\n',
+                '                            "type": "arrayPropertyValue"\n',
+                '                        }',
+            ]
+            dtp.writelines(unlockText)
+
+            if i < len(missionNames) - 1:
+                dtp.write(',')
+            dtp.write('\n')
+
+        closeText = [
+            '                    ]\n',
+            '                }\n',
+            '            ]\n'
+        ]
+        dtp.writelines(closeText)
 
 def mission_order_rando(seed):
     with open(filepath, "a") as dtp:
