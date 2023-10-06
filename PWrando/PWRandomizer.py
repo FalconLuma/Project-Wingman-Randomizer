@@ -141,7 +141,7 @@ naStatRanges = [[10, 400], [15, 300], [5, 200], [5, 200], [400, 1000], [100, 600
 
 OpSlotRanges = [1, 11]
 
-missionNames = ['C02_Frontiers', 'C03_Homestead', 'C04_Uphill', 'C05_Sirens', 'C06_MachineOfTheMantle',
+missionNames = ['C01_BlackFlag','C02_Frontiers', 'C03_Homestead', 'C04_Uphill', 'C05_Sirens', 'C06_MachineOfTheMantle',
                 'C07_EminentDomain', 'C08_ClearSkies', 'C09_SteppingStone', 'C10_PillarsOfComm', 'C11_ColdWar',
                 'C13_MidnightLight', 'C14_Valkyrie', 'C15_OpenSeason', 'C16_ConsequenceOf', 'C16B_Unfortunate',
                 'C17_NoRespite', 'C18_Return', 'C19_RedSea', 'C20_Presidia', 'C22_Kings']
@@ -151,6 +151,7 @@ missionIDList = ['campaign_02', 'campaign_03', 'campaign_04', 'campaign_05', 'ca
                  'campaign_16.2', 'campaign_17', 'campaign_18', 'campaign_19', 'campaign_20', 'campaign_22']
 
 missionUnlockStrings = {
+    'campaign_01': ['mission_01','freeflight','freemission','F-4E'],
     'campaign_02': ['mission_02', 'AJS-37','J-10B'],  # 'J10B'
     'campaign_03': ['mission_03', 'CF-105', 'Su-25'],
     'campaign_04': ['mission_04', 'MIG-31', 'F-16C'],
@@ -169,7 +170,7 @@ missionUnlockStrings = {
     'campaign_17': ['mission_17', 'F-22'],
     'campaign_18': ['mission_18'],
     'campaign_19': ['mission_19'],
-    'campaign_20': ['mission_20'],
+    'campaign_20':['mission_20'],
     'campaign_22': ['campaignfinish', 'PW-001', 'SPEAR', 'mission_22']
 }
 
@@ -188,7 +189,7 @@ rStats = tk.BooleanVar()
 rWeps = tk.BooleanVar()
 rOpSlot = tk.BooleanVar()
 rMission = tk.BooleanVar()
-repairUnlocks = tk.BooleanVar()
+repairUnlocks = tk.IntVar()
 BWcompatibility = tk.BooleanVar()
 rAirNpc = tk.BooleanVar(value=False)
 
@@ -302,19 +303,21 @@ def run_rando():
                 dtp.write(',\n')
         stat_rando(seed)
 
-    # Close DB_Aircraft
+    # Close DB_Aircraft and open DB_ProjectWingmanLevelList
     with open(filepath, "a") as dtp:
-        dtp.write('            ]')
+        dtp.write('            ],')
+        dtp.write('            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/AircraftData/DB_ProjectWingmanLevelList.uexp": [\n')
 
+    unreleased_unlock_strings()
     if rMission.get():
         print('Randomizing Mission Order')
-        with open(filepath, "a") as dtp:
-            dtp.write(',\n')
         mission_order_rando(seed)
-    elif Unreleased.get():
-        with open(filepath, "a") as dtp:
-            dtp.write(',\n')
-        unreleased_unlock_strings()
+
+    write_unlock_strings(seed)
+
+    # Close DB_ProjectWingmanLevelList
+    with open(filepath, "a") as dtp:
+        dtp.write('            ]')
 
     if rAirNpc.get():
         print('Randomizing NPCs')
@@ -324,7 +327,7 @@ def run_rando():
 
     # Close the dtp file
     with open(filepath, "a") as dtp:
-        dtpEnd = ['        }\n',
+        dtpEnd = ['\n        }\n',
                   '    }]\n',
                   '}']
 
@@ -632,19 +635,19 @@ def weapon_rando(seed, variants):
 def unreleased_unlock_strings():
     with open(filepath, "a") as dtp:
         openText = [
-            '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Levels/DB_ProjectWingmanLevelList.uexp": [\n',
             '                {\n',
             '                    "name": "Update Unlcok Strings",\n',
             '                    "patches": [\n',
         ]
         dtp.writelines(openText)
-
+        mIdL = ['campaign_01']
+        mIdL.extend(missionIDList)
         for i, m in enumerate(missionNames):
             unlockText = [
                 '                        {\n',
                 '                            "description": "",\n',
                 '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
-                '                            "value": "StrProperty:' + str(missionUnlockStrings[missionIDList[i]]) + '",\n',
+                '                            "value": "StrProperty:' + str(missionUnlockStrings[mIdL[i]]) + '",\n',
                 '                            "type": "arrayPropertyValue"\n',
                 '                        }',
             ]
@@ -657,7 +660,6 @@ def unreleased_unlock_strings():
         closeText = [
             '                    ]\n',
             '                }\n',
-            '            ]\n'
         ]
         dtp.writelines(closeText)
 
@@ -668,51 +670,154 @@ def mission_order_rando(seed):
         missionIDs = missionIDList
         random.shuffle(missionIDs)
         openText = [
-            '            "ProjectWingman/Content/ProjectWingman/Blueprints/Data/Levels/DB_ProjectWingmanLevelList.uexp": [\n',
-            '                {\n',
+            '                ,{\n',
             '                    "name": "Re-Order Missions",\n',
             '                    "patches": [\n',
         ]
         dtp.writelines(openText)
 
         for i, m in enumerate(missionNames):
-            missionText = [
-                '                        {\n',
-                '                            "description": "",\n',
-                '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'ID*'" + '}.<StrProperty>",\n',
-                '                            "value": "StrProperty:' + "'" + missionIDs[i] + "'" + '",\n',
-                '                            "type": "propertyValue"\n',
-                '                        },\n',
-                '                        {\n',
-                '                            "description": "",\n',
-                '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'NextLevelLink*'" + '}.<StrProperty>",\n',
-                '                            "value": "StrProperty:' + "'" + missionPointers[missionIDs[i]] + "'" + '",\n',
-                '                            "type": "propertyValue"\n',
-                '                        }'
-            ]
-            dtp.writelines(missionText)
-            if repairUnlocks.get():
-                unlockText = [
-                    ',\n',
+            if i == 0:
+                pass
+            else:
+                missionText = [
                     '                        {\n',
                     '                            "description": "",\n',
-                    '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
-                    '                            "value": "StrProperty:' + str(missionUnlockStrings[missionIDs[i]]) + '",\n',
-                    '                            "type": "arrayPropertyValue"\n',
-                    '                        }',
+                    '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'ID*'" + '}.<StrProperty>",\n',
+                    '                            "value": "StrProperty:' + "'" + missionIDs[i-1] + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        },\n',
+                    '                        {\n',
+                    '                            "description": "",\n',
+                    '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'NextLevelLink*'" + '}.<StrProperty>",\n',
+                    '                            "value": "StrProperty:' + "'" + missionPointers[missionIDs[i-1]] + "'" + '",\n',
+                    '                            "type": "propertyValue"\n',
+                    '                        }'
                 ]
-                dtp.writelines(unlockText)
+                dtp.writelines(missionText)
 
-            if i < len(missionNames) - 1:
+#            if repairUnlocks.get():
+#                unlockText = [
+#                    ',\n',
+#                    '                        {\n',
+#                    '                            "description": "",\n',
+#                    '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
+#                    '                            "value": "StrProperty:' + str(missionUnlockStrings[missionIDs[i]]) + '",\n',
+#                    '                            "type": "arrayPropertyValue"\n',
+#                    '                        }',
+#                ]
+#                dtp.writelines(unlockText)
+
+            if (not i == 0) and i < len(missionNames) - 1:
                 dtp.write(',')
             dtp.write('\n')
 
         closeText = [
             '                    ]\n',
             '                }\n',
-            '            ]\n'
         ]
         dtp.writelines(closeText)
+
+def unlock_rando(seed):
+
+    random.seed(seed)
+
+    counts = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    unlockStrings = {
+        'campaign_01': ['mission_01','freeflight','freemission'],
+        'campaign_02': ['mission_02'],
+        'campaign_03': ['mission_03'],
+        'campaign_04': ['mission_04'],
+        'campaign_05': ['mission_05'],
+        'campaign_06': ['mission_06'],
+        'campaign_07': ['mission_07'],
+        'campaign_08': ['mission_08'],
+        'campaign_09': ['mission_09'],
+        'campaign_10': ['mission_10'],
+        'campaign_11': ['mission_11'],
+        'campaign_13': ['mission_13'],
+        'campaign_14': ['mission_14'],
+        'campaign_15': ['mission_15'],
+        'campaign_16': ['mission_16'],
+        'campaign_16.2': ['mission_16.2'],
+        'campaign_17': ['mission_17'],
+        'campaign_18': ['mission_18'],
+        'campaign_19': ['mission_19'],
+        'campaign_20':['mission_20'],
+        'campaign_22': ['campaignfinish', 'mission_22']
+    }
+
+    planelist = []
+    for p in PlaneInfo:
+        ID = p.value[3]
+        if ID == 'X-16':
+            ID = 'X-16Z'
+        elif ID == 'FT-15':
+            ID = 'F-15T'
+        if ID not in ['CF-105_2','MiG-21_2','AV-8_2']:
+            planelist.append(ID)
+
+    random.shuffle(planelist)
+    m = 0
+    mIdL = ['campaign_01']
+    mIdL.extend(missionIDList)
+    while len(planelist) > 0:
+        if counts[m] < 2:
+            addPlane = random.choice([True,False])
+            if addPlane:
+                newPlane = planelist.pop(0)
+                counts[m] = counts[m] + 1
+                key = mIdL[m]
+                unlckStr = unlockStrings[key]
+                unlckStr.append(newPlane)
+                unlockStrings[key] = unlckStr
+
+        m = (m + 1) % 20
+
+    return unlockStrings
+
+def write_unlock_strings(seed):
+    with open(filepath, "a") as dtp:
+        print(repairUnlocks.get)
+        unlockStrings = missionUnlockStrings
+        mIdL = ['campaign_01']
+        mIdL.extend(missionIDList)
+        if repairUnlocks.get() == 1:
+            pass
+        else:
+
+            if(rMission):
+                openText = [
+                    '                ,{\n',
+                    '                    "name": "Unlocks",\n',
+                    '                    "patches": [\n',
+                ]
+                dtp.writelines(openText)
+            if repairUnlocks.get() == 2:
+
+                unlockStrings = unlock_rando(seed)
+            for i, m in enumerate(missionNames):
+                unlockText = [
+                    '                        {\n',
+                    '                            "description": "",\n',
+                    '                            "template": "datatable:[' + "'" + m + "'" + '].[0].{' + "'UnlocksStringReward*'" + '}",\n',
+                    '                            "value": "StrProperty:' + str(unlockStrings[mIdL[i]]) + '",\n',
+                    '                            "type": "arrayPropertyValue"\n',
+                    '                        }',
+                ]
+                dtp.writelines(unlockText)
+
+                if i < len(missionNames) - 1:
+                    dtp.write(',')
+                dtp.write('\n')
+            dtp.write('                    ]\n')
+
+        closeText = [
+            '                }\n',
+        ]
+        dtp.writelines(closeText)
+
+
 
 def npc_air_rando(seed):
     with open(filepath, "a") as dtp:
@@ -1067,21 +1172,19 @@ if __name__ == "__main__":
                         variable=rOpSlot, onvalue=True, offvalue=False)
     c4.pack()
 
-
-    def active_unlock():
-        if rMission.get():
-            c6.config(state='active')
-        else:
-            c6.config(state='disabled')
-
-
     c5 = tk.Checkbutton(window, text='Randomize Mission Order', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=rMission, onvalue=True, offvalue=False, command=active_unlock)
+                        variable=rMission, onvalue=True, offvalue=False)
     c5.pack()
 
-    c6 = tk.Checkbutton(window, text='Normal Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=repairUnlocks, onvalue=True, offvalue=False, state='disabled')
-    c6.pack()
+    r1 = tk.Radiobutton(window, text='Normal Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=0)
+    r1.pack()
+    r2 = tk.Radiobutton(window, text='Mission Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=1)
+    r2.pack()
+    r2 = tk.Radiobutton(window, text='Random Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=2)
+    r2.pack()
 
     c7 = tk.Checkbutton(window, text='Balanced Wingman Compatibility', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=BWcompatibility, onvalue=True, offvalue=False)
