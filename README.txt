@@ -4,7 +4,7 @@ Project Wingman Randomizer by FalconLuma
 Distribution Sources
 -------------------------------------------------------------------------------------------------------------
 https://www.nexusmods.com/projectwingman/mods/355 - Stable version, not updated regularly
-https://github.com/FalconLuma/Project-Wingman-Randomizer - Likely to be more up-to-date then Nexus, both 
+https://github.com/FalconLuma/Project-Wingman-Randomizer - Likely to be more up-to-date than Nexus, both
                                                            stable and experimental builds
 
 -------------------------------------------------------------------------------------------------------------
@@ -67,6 +67,7 @@ Attribute Randomizer Selection
         - Provides a smoother experience when enabled as your more likely to get a better plane earlier
       - Mission: Aircraft will unlock after completing the mission that usually unlocks them
         - i.e. Frontiers will always unlock the SV-37 even if it's the last mission in the campaign
+        - Can cause you to be stuck with a starter aircraft for a long time depending on RNG
       - Random: Aircraft unlocks are shuffled throughout all 21 missions
         - No mission can unlock more than 2 aircraft upon completion
     - Balanced Wingman Compatibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
@@ -92,8 +93,8 @@ can be assigned.
 Aircraft Performance - These settings directly correlate to the stats shown in the hangar
   - Response: Controls how long it takes for an input to be fully realised - higher is faster
     - e.g. how long it takes to move the ailerons from a neutral position to the requested position
-    - Also affects the camera lag when manuevoring
-    - This is an arbitary unit
+    - Also affects the camera lag when manoeuvring
+    - This is an arbitrary unit
   - Speed: The top speed of the aircraft in km/h
   - Acceleration: How quickly the aircraft accelerates - higher is faster
   - Roll: How quickly the aircraft will roll - higher is faster
@@ -102,16 +103,15 @@ Aircraft Performance - These settings directly correlate to the stats shown in t
   
 Weapon Selection
   - All weapons with a checked box next to them will be included in the weapon pool for randomization
-    - NOTE: EUFB (the nuke) is not selected by default but can be enabled
+    - NOTE: EUFB (the nuke) is NOT selected by default, but can be enabled
     - Weapons that are not available in the base game, but are in files and work properly are included here
   - Unguided Chance: Sets the chance for a naturally unguided weapon to remain unguided
     - Decimal between 0 and 1
       - 0 = All unguided weapons will become guided
       - 1 = All unguided weapons will stay unguided
-      - Any values in this range = probability at which each unguided weapon will become guided
+      - Any values in this range = probability at which each unguided weapon will stay unguided
       - Any value outside this range will be rounded to either 0 or 1 whichever is closer
   - Options per Slot: The min and max number of weapons that will available for each weapon slot
-      - Any slot on an aircraft can have between 1 and the given value slots
       
 Weapon Attributes
   - Reload: time in seconds for how long it takes to reload a single hardpoint
