@@ -41,12 +41,15 @@ Randomizer Seed
     - Using the same seed with the same settings will always produce the same result
   - You can enter literally anything in the text box
   OR
-  - Pressing 'Generate Random Seed' will create a random seed of a 20 digit long Integer
+  - Pressing 'Generate Random Seed' will create a random seed of a 20 digit long integer
     - Using a generated seed will overwrite anything already in the text box
     - Once a seed is generated both the textbox and button are disabled to ensure repeatability
  
 Attribute Randomizer Selection
   - Use the checkboxes to select what parts of the game to randomize
+    - Unreleased Planes: Will add six unreleased planes that are in a near-complete state
+      - FC.2M, G-10, X-16Z. F/F-18, Sk.30, F/T-15
+      - For non-randomized unlocks, aircraft are unlocked in positions based on their un-modded performance
     - Plane Performance: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
     - Plane Weapons: Randomizes the weapons available to each plane
     - Weapon Stats: Randomizes attributes for player weapons (Ammo, Reload, Range, etc.)
@@ -58,20 +61,22 @@ Attribute Randomizer Selection
     - Mission Order: Randomizes the order of missions
       - Does not affect the order of missions in the Free Mission menu however the menu names will be changed
       - NOTE: Black Flag will always be the first mission of the campaign for reasons outside my control
-    - Normal Unlock Order: Alter the unlocks such that they are the same as in a normal campaign
-      - i.e. No matter what mission is 2nd the SV-37 will be unlocked upon completion
-      - if unchecked unlocks are tied to the mission itself
-        - i.e. Kings will always unlock the SP-34R and PW-MK.1 even if it's the second mission in the campaign
-      - This option is only available if Mission Order Randomization is enabled
-      - Provides a smoother experience when enabled as your more likely to get a better plane earlier
-    - Balanced Wingman Comaptibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
+    - Unlock Order: Select the order in which you want he aircraft to unlock
+      - Normal: Aircraft will unlock based on how far into the campaign you are
+        - i.e. No matter what mission is 2nd the SV-37 will be unlocked upon completion
+        - Provides a smoother experience when enabled as your more likely to get a better plane earlier
+      - Mission: Aircraft will unlock after completing the mission that usually unlocks them
+        - i.e. Frontiers will always unlock the SV-37 even if it's the last mission in the campaign
+      - Random: Aircraft unlocks are shuffled throughout all 21 missions
+        - No mission can unlock more than 2 aircraft upon completion
+    - Balanced Wingman Compatibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
       - Requires Balanced Wingman is installed and above the randomizer in load order (should be by default)
 Weapon Variations 
   - Defaults to 1
   - Defines how many versions of each weapon should be created
     - i.e. a value of 3 would cause 3 different versions of MLAA to randomized with different stats
     - This setting has a large impact on how long it will take to run PSM
-    - I recommend a value between 1 and 3
+    - A value between 1 and 3 is recommended
 
 -------------------------------------------------------------------------------------------------------------
 Advanced Settings
