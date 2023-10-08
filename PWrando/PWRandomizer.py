@@ -916,7 +916,7 @@ if __name__ == "__main__":
     print('Opening Randomizer')
 
     window.title('Project Wingman Randomizer')
-    window.geometry('550x900+100+100')
+    window.geometry('550x800+100+100')
     window.config(bg='#303030')
 
     seedGens = 0
