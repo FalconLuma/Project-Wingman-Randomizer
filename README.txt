@@ -5,7 +5,7 @@ Distribution Sources
 -------------------------------------------------------------------------------------------------------------
 https://www.nexusmods.com/projectwingman/mods/355 - Stable version, not updated regularly
 https://github.com/FalconLuma/Project-Wingman-Randomizer - Likely to be more up-to-date than Nexus, both
-                                                           stable and experimental builds
+                                                           stable and experimental builds, source code
 
 -------------------------------------------------------------------------------------------------------------
 Compatibility
@@ -29,7 +29,7 @@ Installation and Usage
   - e.g. C:\Program Files (x86)\Steam\steamapps\common\Project Wingman
 2. Run PWRandomizer.exe
 3. Choose your settings and press 'Run Randomizer' button
-4. Run Project Sicario Merger (PSM) adn wait for it to finish
+4. Run Project Sicario Merger (PSM) and wait for it to finish
 5. Run Project Wingman
 
 -------------------------------------------------------------------------------------------------------------
@@ -50,9 +50,10 @@ Attribute Randomizer Selection
     - Unreleased Planes: Will add six unreleased planes that are in a near-complete state
       - FC.2M, G-10, X-16Z. F/F-18, Sk.30, F/T-15
       - For non-randomized unlocks, aircraft are unlocked in positions based on their un-modded performance
-    - Plane Performance: Randomizes the performance stats of all planes (Speed, Roll Rate, etc.)
+    - Plane Performance: Randomizes the performance stats of all planes (Speed, Turn, Roll rate, etc.)
     - Plane Weapons: Randomizes the weapons available to each plane
-    - Weapon Stats: Randomizes attributes for player weapons (Ammo, Reload, Range, etc.)
+    - Weapon Stats: Randomizes attributes for the player's weapons (Ammo, Reload, Range, etc.)
+      - The basic STDM that is mandatory on all aircraft is not affected by this
       - Due to game limitations, attributes such as damage and explosion radius cannot be modified
       - When using this option the normal weapon descriptions will be replaced with the new weapon stats
     - Options/Slot: Randomizes how many weapon options are available for every weapon slot on every plane
@@ -67,7 +68,7 @@ Attribute Randomizer Selection
         - Provides a smoother experience when enabled as your more likely to get a better plane earlier
       - Mission: Aircraft will unlock after completing the mission that usually unlocks them
         - i.e. Frontiers will always unlock the SV-37 even if it's the last mission in the campaign
-        - Can cause you to be stuck with a starter aircraft for a long time depending on RNG
+        - Can cause you to be stuck with a starter aircraft for a long time depending on mission order
       - Random: Aircraft unlocks are shuffled throughout all 21 missions
         - No mission can unlock more than 2 aircraft upon completion
     - Balanced Wingman Compatibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
@@ -86,7 +87,7 @@ Advanced Settings
 !THE 'SAVE SETTINGS' BUTTON MUST BE PRESSED AND 'SETTINGS SAVED' TEXT MUST APPEAR FOR CHANGES TO TAKE EFFECT!
 
 These setting allow you to fine tune the output of the randomizer by controlling the ranges that stats
-can be assigned. 
+can be assigned with.
   - Randomized stats will be >= min value and <= max value
   - By default all stat ranges are initialized to the ranges found naturally in the game
 
@@ -120,9 +121,9 @@ Weapon Attributes
     - e.g. un-modded ASM is 1, un-modded STDM is 2
     - if a weapon has value exceeding the number of equipped hardpoints this value equals the hardpoint count
   - Max Locks: The number of enemies that can be simultaneously locked on to
-    - In practice this is limited to equipped hardpoints * salvo size
+    - In practice this can be limited to equipped hardpoints * salvo size
       - e.g. 2 MLAA-3 hardpoints would be limited to 6 locks
-  - Range: The max distance in meters that weapon can lock onto an enemy from
+  - Range: The max distance, in meters, that the weapon can lock onto an enemy from
   
   The following stats are exclusive to the gun pods (RGP, MGP, HGP, CGP), the Railgun uses the stats above
   - Gun Reload: the time in seconds between shots for a single gunpod

@@ -245,7 +245,7 @@ def run_rando():
         dtp = open(filepath, "w+")
         dtp.close()
     except:
-        labelError.pack()
+        labelError.grid(row=20, columnspan=3)
 
     with open(filepath, "w+") as dtp:
         # Clear the DTP file of all text before starting
@@ -339,7 +339,7 @@ def run_rando():
     # Display a message when the randomizer is finished
     print('Finished Randomizing')
     print('Depending on your settings Project Sicario Merger may take more than a minute to run')
-    labelFinished.pack()
+    labelFinished.grid(row=20, columnspan=3)
     labelError.destroy()
     b2.config(state='disabled')
 
@@ -916,7 +916,7 @@ if __name__ == "__main__":
     print('Opening Randomizer')
 
     window.title('Project Wingman Randomizer')
-    window.geometry('550x800+100+100')
+    window.geometry('550x900+100+100')
     window.config(bg='#303030')
 
     seedGens = 0
@@ -1141,13 +1141,13 @@ if __name__ == "__main__":
         btn1.grid(row=22 , columnspan=7, pady=20)
         settings.mainloop()
 
-
     canvas_width = 550
     width = 550
     height = int((width / 5348) * 2362)
     canvas_height = 150
     c1 = tk.Canvas(width=canvas_width, height=canvas_height, bg='#303030', border=0, highlightthickness=0)
-    c1.pack()
+    c1.grid(row=0, columnspan=3)
+    #c1.pack()
     img = Image.open(resource_path('Banner1.png'))
 
     img = img.resize((width, height))
@@ -1159,74 +1159,82 @@ if __name__ == "__main__":
 
     l2 = tk.Label(text="Enter a seed or press the button to generate a random seed",
                   bg='#303030', fg='#e7530c',font=('bold', 15), wraplength=400)
-    l2.pack()
+    l2.grid(row=1, columnspan=3)
+    frameSeed = tk.Frame(window,bg='#303030')
+    frameSeed.grid(row=2, columnspan=3)
 
-    t1 = tk.Text(window, height=1, width=40)
-    t1.pack()
+    t1 = tk.Text(frameSeed, height=1, width=35)
+    t1.grid(row=0, columnspan=2, sticky='E')
 
-    b1 = tk.Button(window, text="Generate Random Seed", command=gen_seed,
+    b1 = tk.Button(frameSeed, text="Random Seed", command=gen_seed,
                    bg='#303030', fg='#e7530c', font=('bold', 12))
-    b1.pack()
+    b1.grid(row=0, column=2, sticky='W')
 
     lblank1 = tk.Label(text="", bg='#303030', font=('', 8))
-    lblank1.pack()
+    lblank1.grid(row=4, columnspan=3)
 
     l3 = tk.Label(text="Please select what attributes you would like to randomize:",
                   bg='#303030', fg='#e7530c',font=('bold', 15), wraplength=500)
-    l3.pack()
+    l3.grid(row=5, columnspan=3)
 
     cU = tk.Checkbutton(window, text='Add Unreleased Planes', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=Unreleased, onvalue=True, offvalue=False)
-    cU.pack()
+    cU.grid(row=6, columnspan=3)
 
     c2 = tk.Checkbutton(window, text='Randomize Plane Performance', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rStats, onvalue=True, offvalue=False)
-    c2.pack()
+    c2.grid(row=7, columnspan=3)
 
     c1 = tk.Checkbutton(window, text='Randomize Plane Weapons', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rLoad, onvalue=True, offvalue=False)
-    c1.pack()
+    c1.grid(row=8, columnspan=3)
 
     c3 = tk.Checkbutton(window, text='Randomize Weapon Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rWeps, onvalue=True, offvalue=False)
-    c3.pack()
+    c3.grid(row=9, columnspan=3)
     c4 = tk.Checkbutton(window, text='Randomize Options/Slot', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rOpSlot, onvalue=True, offvalue=False)
-    c4.pack()
+    c4.grid(row=10, columnspan=3)
 
     c5 = tk.Checkbutton(window, text='Randomize Mission Order', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rMission, onvalue=True, offvalue=False)
-    c5.pack()
+    c5.grid(row=11, columnspan=3)
 
-    r1 = tk.Radiobutton(window, text='Normal Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+    lun = tk.Label(text="Select Unlock Order:",bg='#303030', fg='#e7530c', font=('bold', 15))
+    lun.grid(row=12, columnspan=3)
+
+    r1 = tk.Radiobutton(window, text='Normal', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=repairUnlocks, value=0)
-    r1.pack()
-    r2 = tk.Radiobutton(window, text='Mission Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+    r1.grid(row=13, column=0, sticky='E')
+    r2 = tk.Radiobutton(window, text='Mission', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=repairUnlocks, value=1)
-    r2.pack()
-    r2 = tk.Radiobutton(window, text='Random Unlock Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+    r2.grid(row=13, column=1)
+    r2 = tk.Radiobutton(window, text='Random', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=repairUnlocks, value=2)
-    r2.pack()
+    r2.grid(row=13, column=2, sticky='W')
 
     c7 = tk.Checkbutton(window, text='Balanced Wingman Compatibility', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=BWcompatibility, onvalue=True, offvalue=False)
-    c7.pack()
+    c7.grid(row=14, columnspan=3)
 
-    l4 = tk.Label(text="Enter the number of variations of each weapon", bg='#303030', fg='#e7530c',
+    frameVar = tk.Frame(window,bg='#303030')
+    frameVar.grid(row=15,columnspan=3)
+
+    l4 = tk.Label(frameVar,text="Number of Weapon Variants:", bg='#303030', fg='#e7530c',
                   font=('bold', 15), wraplength=500)
-    l4.pack()
+    l4.grid(row=0, column=0, sticky='E')
 
-    t2 = tk.Text(window, height=1, width=40)
-    t2.pack()
+    t2 = tk.Text(frameVar, height=1, width=10)
+    t2.grid(row=0,column=1, sticky='W')
 
     lblank2 = tk.Label(text="", bg='#303030', font=('', 8))
-    lblank2.pack()
+    lblank2.grid(row=17, columnspan=3)
 
     b3 = tk.Button(window, text="Advanced Settings", bg='#e7530c', width=25, command=open_settings, font=('bold', 15))
-    b3.pack()
+    b3.grid(row=18, columnspan=3)
 
     b2 = tk.Button(window, text="Press to Randomize", bg='#e7530c', width=25, command=run_rando, font=('bold', 15))
-    b2.pack()
+    b2.grid(row=19, columnspan=3)
 
     labelFinished = tk.Label(
         text="\nYour randomizer mod has been created\nPlease run ProjectSicario.exe\n\nYou can now close this program",
