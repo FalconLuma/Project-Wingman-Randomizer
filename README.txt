@@ -47,18 +47,22 @@ Randomizer Seed
  
 Attribute Randomizer Selection
   - Use the checkboxes to select what parts of the game to randomize
-    - Unreleased Planes: Will add six unreleased planes that are in a near-complete state
-      - FC.2M, G-10, X-16Z. F/F-18, Sk.30, F/T-15
-      - For non-randomized unlocks, aircraft are unlocked in positions based on their un-modded performance
     - Plane Performance: Randomizes the performance stats of all planes (Speed, Turn, Roll rate, etc.)
-    - Plane Weapons: Randomizes the weapons available to each plane
-    - Weapon Stats: Randomizes attributes for the player's weapons (Ammo, Reload, Range, etc.)
-      - The basic STDM that is mandatory on all aircraft is not affected by this
-      - Due to game limitations, attributes such as damage and explosion radius cannot be modified
-      - When using this option the normal weapon descriptions will be replaced with the new weapon stats
+    - Plane Loadouts: Randomizes the list of weapons available to each hardpoint on each plane
     - Options/Slot: Randomizes how many weapon options are available for every weapon slot on every plane
       - If left unchecked all slots will have the same number of options as in an unmodified game
       - Any slots that normally have 0 options will not change
+
+    - Weapon Stats: Randomizes attributes for the player's weapons (Ammo, Reload, Range, etc.)
+      - The basic STDM that is mandatory on all aircraft is not affected by the randomizer
+      - Due to game limitations, attributes such as damage and explosion radius cannot be modified
+      - When using this option the normal weapon descriptions will be replaced with the new weapon stats
+    - Weapon Variants: Defines how many versions of each weapon should be created
+        - Defaults to 1
+        - i.e. a value of 3 would cause 3 different versions of MLAA to randomized with different stats
+        - This setting has a large impact on how long it will take to run PSM
+        - A value between 1 and 3 is recommended
+
     - Mission Order: Randomizes the order of missions
       - Does not affect the order of missions in the Free Mission menu however the menu names will be changed
       - NOTE: Black Flag will always be the first mission of the campaign for reasons outside my control
@@ -71,14 +75,14 @@ Attribute Randomizer Selection
         - Can cause you to be stuck with a starter aircraft for a long time depending on mission order
       - Random: Aircraft unlocks are shuffled throughout all 21 missions
         - No mission can unlock more than 2 aircraft upon completion
+
+    - Unreleased Planes: Will add six unreleased planes that are in a near-complete state
+      - FC.2M, G-10, X-16Z. F/F-18, Sk.30, F/T-15
+      - For non-randomized unlocks, aircraft are unlocked in positions based on their un-modded performance
     - Balanced Wingman Compatibility: Adds the weapons from the Balanced Wingman mod to the weapon pool
       - Requires Balanced Wingman is installed and above the randomizer in load order (should be by default)
-Weapon Variations 
-  - Defaults to 1
-  - Defines how many versions of each weapon should be created
-    - i.e. a value of 3 would cause 3 different versions of MLAA to randomized with different stats
-    - This setting has a large impact on how long it will take to run PSM
-    - A value between 1 and 3 is recommended
+
+
 
 -------------------------------------------------------------------------------------------------------------
 Advanced Settings
