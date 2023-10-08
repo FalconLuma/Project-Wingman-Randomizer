@@ -1173,68 +1173,102 @@ if __name__ == "__main__":
     lblank1 = tk.Label(text="", bg='#303030', font=('', 8))
     lblank1.grid(row=4, columnspan=3)
 
-    l3 = tk.Label(text="Please select what attributes you would like to randomize:",
-                  bg='#303030', fg='#e7530c',font=('bold', 15), wraplength=500)
-    l3.grid(row=5, columnspan=3)
+    # Aircraft Rando Settings
+    l3 = tk.Label(text="Player Aircraft Randomization:",
+                  bg='#303030', fg='#e7530c', font=('bold', 20), wraplength=500)
+    l3.grid(row=6, columnspan=3)
 
-    cU = tk.Checkbutton(window, text='Add Unreleased Planes', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=Unreleased, onvalue=True, offvalue=False)
-    cU.grid(row=6, columnspan=3)
-
-    c2 = tk.Checkbutton(window, text='Randomize Plane Performance', bg='#303030', fg='#e7530c', font=('bold', 15),
+    c2 = tk.Checkbutton(window, text='Performance', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rStats, onvalue=True, offvalue=False)
-    c2.grid(row=7, columnspan=3)
+    c2.grid(row=7, column=0, sticky='E')
 
-    c1 = tk.Checkbutton(window, text='Randomize Plane Weapons', bg='#303030', fg='#e7530c', font=('bold', 15),
+    c1 = tk.Checkbutton(window, text='Loadouts', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rLoad, onvalue=True, offvalue=False)
-    c1.grid(row=8, columnspan=3)
+    c1.grid(row=7, column=1)
 
-    c3 = tk.Checkbutton(window, text='Randomize Weapon Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=rWeps, onvalue=True, offvalue=False)
-    c3.grid(row=9, columnspan=3)
-    c4 = tk.Checkbutton(window, text='Randomize Options/Slot', bg='#303030', fg='#e7530c', font=('bold', 15),
+    c4 = tk.Checkbutton(window, text='Options/Slot', bg='#303030', fg='#e7530c', font=('bold', 15),
                         variable=rOpSlot, onvalue=True, offvalue=False)
-    c4.grid(row=10, columnspan=3)
+    c4.grid(row=7, column=2,sticky='W')
 
-    c5 = tk.Checkbutton(window, text='Randomize Mission Order', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=rMission, onvalue=True, offvalue=False)
-    c5.grid(row=11, columnspan=3)
+    lblank1 = tk.Label(text="", bg='#303030', font=('', 4))
+    lblank1.grid(row=8, columnspan=3)
+    # Weapon Rando Settings
+    l4 = tk.Label(text="Player Weapon Randomization:",
+                  bg='#303030', fg='#e7530c', font=('bold', 20), wraplength=500)
+    l4.grid(row=9, columnspan=3)
 
-    lun = tk.Label(text="Select Unlock Order:",bg='#303030', fg='#e7530c', font=('bold', 15))
-    lun.grid(row=12, columnspan=3)
+    framWep = tk.Frame(window, bg='#303030')
+    framWep.grid(row=10,columnspan=3)
 
-    r1 = tk.Radiobutton(window, text='Normal', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=repairUnlocks, value=0)
-    r1.grid(row=13, column=0, sticky='E')
-    r2 = tk.Radiobutton(window, text='Mission', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=repairUnlocks, value=1)
-    r2.grid(row=13, column=1)
-    r2 = tk.Radiobutton(window, text='Random', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=repairUnlocks, value=2)
-    r2.grid(row=13, column=2, sticky='W')
+    c3 = tk.Checkbutton(framWep, text='Stats', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=rWeps, onvalue=True, offvalue=False)
+    c3.grid(row=0, column=0, sticky='E')
 
-    c7 = tk.Checkbutton(window, text='Balanced Wingman Compatibility', bg='#303030', fg='#e7530c', font=('bold', 15),
-                        variable=BWcompatibility, onvalue=True, offvalue=False)
-    c7.grid(row=14, columnspan=3)
+    frameVar = tk.Frame(framWep, bg='#303030')
+    frameVar.grid(row=0, column=1, sticky='W')
 
-    frameVar = tk.Frame(window,bg='#303030')
-    frameVar.grid(row=15,columnspan=3)
-
-    l4 = tk.Label(frameVar,text="Number of Weapon Variants:", bg='#303030', fg='#e7530c',
+    l4 = tk.Label(frameVar, text="      Variants:", bg='#303030', fg='#e7530c',
                   font=('bold', 15), wraplength=500)
     l4.grid(row=0, column=0, sticky='E')
 
     t2 = tk.Text(frameVar, height=1, width=10)
-    t2.grid(row=0,column=1, sticky='W')
+    t2.grid(row=0, column=1, sticky='W')
 
-    lblank2 = tk.Label(text="", bg='#303030', font=('', 8))
-    lblank2.grid(row=17, columnspan=3)
+    lblank1 = tk.Label(text="", bg='#303030', font=('', 4))
+    lblank1.grid(row=11, columnspan=3)
+
+    # Mission Order
+    l5 = tk.Label(text="Mission and Unlock Order:",
+                  bg='#303030', fg='#e7530c', font=('bold', 20), wraplength=500)
+    l5.grid(row=12, columnspan=3)
+
+    c5 = tk.Checkbutton(window, text='Randomize Mission Order', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=rMission, onvalue=True, offvalue=False)
+    c5.grid(row=13, columnspan=3)
+
+    #Unlock Order
+    frameUn = tk.Frame(window, bg='#303030')
+    frameUn.grid(row=14, columnspan=3)
+
+    lun = tk.Label(frameUn, text="Unlock Order:", bg='#303030', fg='#e7530c', font=('bold', 15))
+    lun.grid(row=0, column=0)
+
+    r1 = tk.Radiobutton(frameUn, text='Normal', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=0)
+    r1.grid(row=0, column=1)
+    r2 = tk.Radiobutton(frameUn, text='Mission', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=1)
+    r2.grid(row=0, column=2)
+    r2 = tk.Radiobutton(frameUn, text='Random', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=repairUnlocks, value=2)
+    r2.grid(row=0, column=3)
+
+    lblank1 = tk.Label(text="", bg='#303030', font=('', 4))
+    lblank1.grid(row=15, columnspan=3)
+
+    #Additional Content
+    l6 = tk.Label(text="Additional Content:",bg='#303030', fg='#e7530c', font=('bold', 20), wraplength=500)
+    l6.grid(row=16, columnspan=3)
+
+    frameAdd = tk.Frame(window, bg='#303030')
+    frameAdd.grid(row=17, columnspan=3)
+
+    cU = tk.Checkbutton(frameAdd, text='Unreleased Planes', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=Unreleased, onvalue=True, offvalue=False)
+    cU.grid(row=0, column=0)
+
+    c7 = tk.Checkbutton(frameAdd, text='Balanced Wingman Compatibility', bg='#303030', fg='#e7530c', font=('bold', 15),
+                        variable=BWcompatibility, onvalue=True, offvalue=False)
+    c7.grid(row=0, column=1)
+
+    lblank2 = tk.Label(text="", bg='#303030', font=('', 4))
+    lblank2.grid(row=18, columnspan=3)
 
     b3 = tk.Button(window, text="Advanced Settings", bg='#e7530c', width=25, command=open_settings, font=('bold', 15))
-    b3.grid(row=18, columnspan=3)
+    b3.grid(row=19, columnspan=3)
 
     b2 = tk.Button(window, text="Press to Randomize", bg='#e7530c', width=25, command=run_rando, font=('bold', 15))
-    b2.grid(row=19, columnspan=3)
+    b2.grid(row=20, columnspan=3)
 
     labelFinished = tk.Label(
         text="\nYour randomizer mod has been created\nPlease run ProjectSicario.exe\n\nYou can now close this program",
