@@ -679,7 +679,7 @@ def mission_order_rando(seed):
 
         missionIDs = missionIDList
         random.shuffle(missionIDs)
-        print(missionIDList)
+        #print(missionIDList)
         openText = [
             '                {\n',
             '                    "name": "Re-Order Missions",\n',
@@ -791,14 +791,14 @@ def unlock_rando(seed):
 
 def write_unlock_strings(seed):
     with open(filepath, "a") as dtp:
-        print(repairUnlocks.get())
+        #print(repairUnlocks.get())
         unlockStrings = missionUnlockStrings
         mIdL = ['campaign_01']
         if repairUnlocks.get() == 1:
             mIdL.extend(missionIDList2)
         else:
             mIdL.extend(missionIDList)
-        print(mIdL)
+        #mIdL)
         #if repairUnlocks.get() == 1:
         #    pass
         #else:
